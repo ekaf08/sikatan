@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catat Pemasukan &mdash; Kas Desa Babatan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+      <a class="brand-link" href="index.html">
+        <span class="brand-mark"><i class="bi bi-wallet2"></i></span>
+        <span class="brand-text">
+          <span class="brand-title">Kas Desa Babatan</span>
+          <span class="brand-sub">Area bendahara</span>
+        </span>
+      </a>
+      <button class="sidebar-close d-lg-none" type="button" id="sidebarClose" aria-label="Tutup menu">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navigasi utama">
+      <a class="nav-item-app" href="index.html" data-label="Dashboard">
+        <i class="bi bi-grid-1x2"></i><span class="nav-text">Dashboard</span>
+      </a>
+
+      <div class="nav-section"><span>Transaksi</span></div>
+      <a class="nav-item-app active" href="pemasukan.html" aria-current="page" data-label="Pemasukan">
+        <i class="bi bi-arrow-down-left-circle"></i><span class="nav-text">Pemasukan</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Pengeluaran">
+        <i class="bi bi-arrow-up-right-circle"></i><span class="nav-text">Pengeluaran</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Daftar transaksi">
+        <i class="bi bi-list-ul"></i><span class="nav-text">Daftar transaksi</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Mutasi dana">
+        <i class="bi bi-arrow-left-right"></i><span class="nav-text">Mutasi dana</span>
+      </a>
+
+      <div class="nav-section"><span>Kegiatan dan laporan</span></div>
+      <a class="nav-item-app" href="publik.html" data-label="Acara sedekah bumi">
+        <i class="bi bi-calendar-event"></i><span class="nav-text">Acara sedekah bumi</span>
+      </a>
+      <a class="nav-item-app" href="publik.html" data-label="Laporan dan ekspor">
+        <i class="bi bi-file-earmark-bar-graph"></i><span class="nav-text">Laporan dan ekspor</span>
+      </a>
+
+      <div class="nav-section"><span>Pengelolaan</span></div>
+      <a class="nav-item-app" href="index.html" data-label="Master data">
+        <i class="bi bi-database"></i><span class="nav-text">Master data</span>
+      </a>
+      <a class="nav-item-app" href="index.html" data-label="Pengaturan">
+        <i class="bi bi-gear"></i><span class="nav-text">Pengaturan</span>
+      </a>
+      <a class="nav-item-app" href="index.html" data-label="Log audit">
+        <i class="bi bi-shield-check"></i><span class="nav-text">Log audit</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <span class="avatar">B</span>
+        <span class="user-text">
+          <strong>Bendahara Babatan</strong>
+          <small>bendahara@babatan.test</small>
+        </span>
+      </div>
+      <a class="nav-item-app" href="login.html" data-label="Keluar">
+        <i class="bi bi-box-arrow-right"></i><span class="nav-text">Keluar</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <button class="btn-icon" type="button" id="sidebarToggle" aria-label="Ciutkan sidebar" aria-controls="appSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar-inset"></i>
+      </button>
+
+      <div class="topbar-title d-none d-md-flex">
+        <strong>Pemasukan</strong>
+        <small>Catat uang masuk ke kas desa</small>
+      </div>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="topbar-search d-none d-lg-block">
+          <i class="bi bi-search"></i>
+          <input class="form-control" type="search" placeholder="Cari transaksi..." aria-label="Cari">
+        </div>
+
+        <button class="btn-icon position-relative" type="button" aria-label="Notifikasi">
+          <i class="bi bi-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="dropdown">
+          <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu pengguna">
+            <span class="avatar" style="width:34px;height:34px;font-size:13px">B</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-muted-app">Masuk sebagai Bendahara</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="index.html"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><a class="dropdown-item" href="index.html"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+            <li><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <div class="mb-4">
+        <h1 class="page-title">Catat pemasukan</h1>
+        <p class="page-subtitle">Pilih jenis pemasukan, formulir menyesuaikan.</p>
+      </div>
+
+      <ul class="nav nav-pills flex-wrap gap-2 mb-4" id="tabsPemasukan" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="tab-app active" id="tab-setoran" data-bs-toggle="pill" data-bs-target="#panel-setoran" type="button" role="tab" aria-controls="panel-setoran" aria-selected="true">
+            Setoran iuran kematian
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="tab-app" id="tab-jumat" data-bs-toggle="pill" data-bs-target="#panel-jumat" type="button" role="tab" aria-controls="panel-jumat" aria-selected="false">
+            Uang kotak Jumat
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="tab-app" id="tab-donasi" data-bs-toggle="pill" data-bs-target="#panel-donasi" type="button" role="tab" aria-controls="panel-donasi" aria-selected="false">
+            Donasi
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="tab-app" id="tab-lain" data-bs-toggle="pill" data-bs-target="#panel-lain" type="button" role="tab" aria-controls="panel-lain" aria-selected="false">
+            Lain-lain
+          </button>
+        </li>
+      </ul>
+
+      <div class="row g-4">
+        <div class="col-12 col-xl-8">
+          <div class="tab-content">
+
+            <div class="tab-pane fade show active" id="panel-setoran" role="tabpanel" aria-labelledby="tab-setoran">
+              <form class="card" onsubmit="return false">
+                <div class="card-body d-flex flex-column gap-4">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                      <label class="form-label-app" for="setoranTanggal">Tanggal setoran</label>
+                      <input class="form-control" id="setoranTanggal" type="date" value="2026-11-08">
+                    </div>
+                    <div class="col-6 col-md-4">
+                      <label class="form-label-app" for="setoranRw">RW</label>
+                      <select class="form-select" id="setoranRw">
+                        <option>RW 01</option>
+                        <option>RW 02</option>
+                      </select>
+                    </div>
+                    <div class="col-6 col-md-4">
+                      <label class="form-label-app" for="setoranRt">RT</label>
+                      <select class="form-select" id="setoranRt">
+                        <option>RT 04</option>
+                        <option>RT 01</option>
+                        <option>RT 02</option>
+                        <option>RT 03</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div data-stepper data-price="5000" data-min="0" data-max="41">
+                    <span class="form-label-app">Jumlah KK yang membayar</span>
+                    <div class="stepper mb-3">
+                      <button type="button" class="btn-step" data-step-minus aria-label="Kurangi jumlah KK">
+                        <i class="bi bi-dash-lg"></i>
+                      </button>
+                      <span class="stepper-value" data-step-value>41</span>
+                      <button type="button" class="btn-step" data-step-plus aria-label="Tambah jumlah KK">
+                        <i class="bi bi-plus-lg"></i>
+                      </button>
+                      <span class="hint">dari 41 KK terdata di RT 04</span>
+                    </div>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <span class="form-label-app">Nominal hitungan otomatis</span>
+                        <div class="form-static" data-step-total>Rp205.000</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-app" for="uangDiterima">Uang yang diterima (Rp)</label>
+                        <input class="form-control" id="uangDiterima" data-step-input type="text" value="205.000">
+                        <span class="hint">Ubah bila uang yang diterima berbeda dari hitungan.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="setoranCatatanPublik">Catatan publik</label>
+                    <input class="form-control" id="setoranCatatanPublik" type="text" value="Setoran iuran kematian">
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="setoranCatatanInternal">Catatan internal (hanya bendahara dan admin)</label>
+                    <textarea class="form-control" id="setoranCatatanInternal" placeholder="Contoh: 3 KK menyusul minggu depan"></textarea>
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                    <button class="btn btn-brand" type="submit"><i class="bi bi-check-lg"></i>Simpan pemasukan</button>
+                    <button class="btn btn-outline-brand" type="button"><i class="bi bi-plus-lg"></i>Simpan dan tambah lagi</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="panel-jumat" role="tabpanel" aria-labelledby="tab-jumat">
+              <form class="card" onsubmit="return false">
+                <div class="card-body d-flex flex-column gap-4">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="jumatTanggal">Tanggal</label>
+                      <input class="form-control" id="jumatTanggal" type="date" value="2026-11-06">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="jumatTotal">Total uang kotak (Rp)</label>
+                      <input class="form-control" id="jumatTotal" type="text" value="850.000">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="jumatCatatan">Catatan publik</label>
+                    <input class="form-control" id="jumatCatatan" type="text" value="Uang kotak setelah salat Jumat">
+                  </div>
+
+                  <p class="hint">Dicatat sebagai satu angka total ke Kas Masjid, tanpa rincian per orang.</p>
+
+                  <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                    <button class="btn btn-brand" type="submit"><i class="bi bi-check-lg"></i>Simpan pemasukan</button>
+                    <button class="btn btn-outline-brand" type="button"><i class="bi bi-plus-lg"></i>Simpan dan tambah lagi</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="panel-donasi" role="tabpanel" aria-labelledby="tab-donasi">
+              <form class="card" onsubmit="return false">
+                <div class="card-body d-flex flex-column gap-4">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="donasiTanggal">Tanggal</label>
+                      <input class="form-control" id="donasiTanggal" type="date" value="2026-11-10">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="donasiNominal">Nominal donasi (Rp)</label>
+                      <input class="form-control" id="donasiNominal" type="text" value="1.000.000">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="donasiNama">Nama donatur</label>
+                      <input class="form-control" id="donasiNama" type="text" value="Fulan (contoh)">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="donasiTujuan">Tujuan donasi</label>
+                      <input class="form-control" id="donasiTujuan" type="text" value="Perawatan masjid">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="donasiTampil">Tampil di halaman publik sebagai</label>
+                    <select class="form-select" id="donasiTampil">
+                      <option>Nama asli donatur</option>
+                      <option>Hamba Allah</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="donasiCatatan">Catatan publik</label>
+                    <input class="form-control" id="donasiCatatan" type="text" value="Donasi untuk perawatan masjid">
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                    <button class="btn btn-brand" type="submit"><i class="bi bi-check-lg"></i>Simpan pemasukan</button>
+                    <button class="btn btn-outline-brand" type="button"><i class="bi bi-plus-lg"></i>Simpan dan tambah lagi</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="panel-lain" role="tabpanel" aria-labelledby="tab-lain">
+              <form class="card" onsubmit="return false">
+                <div class="card-body d-flex flex-column gap-4">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="lainTanggal">Tanggal</label>
+                      <input class="form-control" id="lainTanggal" type="date" value="2026-11-12">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="lainNominal">Nominal (Rp)</label>
+                      <input class="form-control" id="lainNominal" type="text" value="750.000">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="lainPos">Masuk ke pos dana</label>
+                      <select class="form-select" id="lainPos">
+                        <option>Kas Lain-lain</option>
+                        <option>Kas Masjid</option>
+                        <option>Kas Sedekah Bumi</option>
+                      </select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-app" for="lainKategori">Kategori</label>
+                      <select class="form-select" id="lainKategori">
+                        <option>Pemasukan Lain-lain</option>
+                        <option>Sewa aset desa</option>
+                        <option>Bunga bank</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="form-label-app" for="lainCatatan">Catatan publik</label>
+                    <input class="form-control" id="lainCatatan" type="text" value="Hasil sewa terop warga">
+                  </div>
+
+                  <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                    <button class="btn btn-brand" type="submit"><i class="bi bi-check-lg"></i>Simpan pemasukan</button>
+                    <button class="btn btn-outline-brand" type="button"><i class="bi bi-plus-lg"></i>Simpan dan tambah lagi</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <aside class="card">
+            <div class="card-body">
+              <h2 class="section-title mb-2">Pemasukan terakhir</h2>
+              <div class="recent-row">
+                <span>08 Nov &middot; Setoran RT 03, RW 01</span>
+                <strong>Rp165.000</strong>
+              </div>
+              <div class="recent-row">
+                <span>08 Nov &middot; Setoran RT 01, RW 02</span>
+                <strong>Rp185.000</strong>
+              </div>
+              <div class="recent-row">
+                <span>06 Nov &middot; Uang kotak Jumat</span>
+                <strong>Rp850.000</strong>
+              </div>
+              <div class="recent-row">
+                <span>30 Okt &middot; Donasi hamba Allah</span>
+                <strong>Rp500.000</strong>
+              </div>
+              <p class="hint mt-3">Salah input? Buka Daftar transaksi dan batalkan dengan alasan, jangan dihapus.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
