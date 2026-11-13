@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log Audit &mdash; Kas Desa Babatan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+      <a class="brand-link" href="index.html">
+        <span class="brand-mark"><i class="bi bi-wallet2"></i></span>
+        <span class="brand-text">
+          <span class="brand-title">Kas Desa Babatan</span>
+          <span class="brand-sub">Area bendahara</span>
+        </span>
+      </a>
+      <button class="sidebar-close d-lg-none" type="button" id="sidebarClose" aria-label="Tutup menu">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navigasi utama">
+      <a class="nav-item-app" href="index.html" data-label="Dashboard">
+        <i class="bi bi-grid-1x2"></i><span class="nav-text">Dashboard</span>
+      </a>
+
+      <div class="nav-section"><span>Transaksi</span></div>
+      <a class="nav-item-app" href="pemasukan.html" data-label="Pemasukan">
+        <i class="bi bi-arrow-down-left-circle"></i><span class="nav-text">Pemasukan</span>
+      </a>
+      <a class="nav-item-app" href="pengeluaran.html" data-label="Pengeluaran">
+        <i class="bi bi-arrow-up-right-circle"></i><span class="nav-text">Pengeluaran</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Daftar transaksi">
+        <i class="bi bi-list-ul"></i><span class="nav-text">Daftar transaksi</span>
+      </a>
+      <a class="nav-item-app" href="mutasi-dana.html" data-label="Mutasi dana">
+        <i class="bi bi-arrow-left-right"></i><span class="nav-text">Mutasi dana</span>
+      </a>
+
+      <div class="nav-section"><span>Kegiatan dan laporan</span></div>
+      <a class="nav-item-app" href="acara.html" data-label="Acara sedekah bumi">
+        <i class="bi bi-calendar-event"></i><span class="nav-text">Acara sedekah bumi</span>
+      </a>
+      <a class="nav-item-app" href="laporan.html" data-label="Laporan dan ekspor">
+        <i class="bi bi-file-earmark-bar-graph"></i><span class="nav-text">Laporan dan ekspor</span>
+      </a>
+
+      <div class="nav-section"><span>Pengelolaan</span></div>
+      <a class="nav-item-app" href="master-wilayah.html" data-label="Master data">
+        <i class="bi bi-database"></i><span class="nav-text">Master data</span>
+      </a>
+      <div class="nav-sub">
+        <a class="nav-sub-item" href="master-wilayah.html">Wilayah RW/RT</a>
+        <a class="nav-sub-item" href="master-pos-dana.html">Pos dana</a>
+        <a class="nav-sub-item" href="master-kategori.html">Kategori</a>
+      </div>
+      <a class="nav-item-app" href="pengaturan.html" data-label="Pengaturan">
+        <i class="bi bi-gear"></i><span class="nav-text">Pengaturan</span>
+      </a>
+      <a class="nav-item-app active" href="log-audit.html" aria-current="page" data-label="Log audit">
+        <i class="bi bi-shield-check"></i><span class="nav-text">Log audit</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <span class="avatar">B</span>
+        <span class="user-text">
+          <strong>Bendahara Babatan</strong>
+          <small>bendahara@babatan.test</small>
+        </span>
+      </div>
+      <a class="nav-item-app" href="login.html" data-label="Keluar">
+        <i class="bi bi-box-arrow-right"></i><span class="nav-text">Keluar</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <button class="btn-icon" type="button" id="sidebarToggle" aria-label="Ciutkan sidebar" aria-controls="appSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar-inset"></i>
+      </button>
+
+      <div class="topbar-title d-none d-md-flex">
+        <strong>Log audit</strong>
+        <small>Riwayat perubahan</small>
+      </div>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="topbar-search d-none d-lg-block">
+          <i class="bi bi-search"></i>
+          <input class="form-control" type="search" placeholder="Cari catatan..." aria-label="Cari">
+        </div>
+
+        <button class="btn-icon position-relative" type="button" aria-label="Notifikasi">
+          <i class="bi bi-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="dropdown">
+          <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu pengguna">
+            <span class="avatar" style="width:34px;height:34px;font-size:13px">B</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-muted-app">Masuk sebagai Bendahara</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+            <li><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content" data-audit>
+      <div class="mb-4">
+        <h1 class="page-title">Log audit</h1>
+        <p class="page-subtitle">Riwayat siapa mengubah apa dan kapan. Hanya bisa dibaca, tidak bisa diubah atau dihapus.</p>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row g-3 align-items-end">
+            <div class="col-6 col-md-4 col-xl">
+              <label class="form-label-app" for="filterAksi">Aksi</label>
+              <select class="form-select" id="filterAksi" data-audit-filter="data-audit-action">
+                <option>Semua aksi</option>
+                <option>Tambah</option>
+                <option>Ubah</option>
+                <option>Batal</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-4 col-xl">
+              <label class="form-label-app" for="filterData">Data</label>
+              <select class="form-select" id="filterData" data-audit-filter="data-audit-data">
+                <option>Semua data</option>
+                <option>Transaksi</option>
+                <option>Mutasi dana</option>
+                <option>Pengaturan</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-4 col-xl">
+              <label class="form-label-app" for="filterPengguna">Pengguna</label>
+              <select class="form-select" id="filterPengguna" data-audit-filter="data-audit-user">
+                <option>Semua pengguna</option>
+                <option>Bendahara Babatan</option>
+                <option>Admin Babatan</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-6 col-xl">
+              <label class="form-label-app" for="filterDari">Dari</label>
+              <input class="form-control" id="filterDari" type="date" value="2026-11-01">
+            </div>
+            <div class="col-6 col-md-6 col-xl">
+              <label class="form-label-app" for="filterSampai">Sampai</label>
+              <input class="form-control" id="filterSampai" type="date" value="2026-11-12">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table-app">
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Pengguna</th>
+                  <th>Aksi</th>
+                  <th>Data</th>
+                  <th>Perubahan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-audit-action="Tambah" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">09 Nov 14.06</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-in">Tambah</span></td>
+                  <td>Transaksi &middot; keluar</td>
+                  <td class="audit-diff">Pembelian alat kebersihan<br>nominal: <span class="diff-new">125.000</span></td>
+                </tr>
+                <tr data-audit-action="Batal" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">08 Nov 14.05</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-neutral">Batal</span></td>
+                  <td>Transaksi &middot; keluar</td>
+                  <td class="audit-diff">Pembelian alat kebersihan (250.000)<br>status: <span class="diff-old">aktif</span> &rarr; <span class="diff-new">batal</span><br>alasan: Salah input, nominal seharusnya 125.000</td>
+                </tr>
+                <tr data-audit-action="Tambah" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">08 Nov 14.01</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-in">Tambah</span></td>
+                  <td>Transaksi &middot; keluar</td>
+                  <td class="audit-diff">Pembelian alat kebersihan<br>nominal: <span class="diff-new">250.000</span></td>
+                </tr>
+                <tr data-audit-action="Tambah" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">08 Nov 09.40</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-in">Tambah</span></td>
+                  <td>Transaksi &middot; masuk</td>
+                  <td class="audit-diff">Setoran iuran kematian, RW 01 RT 03<br>jumlah KK: <span class="diff-new">33</span>, nominal: <span class="diff-new">165.000</span></td>
+                </tr>
+                <tr data-audit-action="Ubah" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">06 Nov 11.02</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-warn">Ubah</span></td>
+                  <td>Transaksi &middot; keluar</td>
+                  <td class="audit-diff">Uang muka konsumsi sedekah bumi<br>nominal: <span class="diff-old">4.000.000</span> &rarr; <span class="diff-new">4.500.000</span></td>
+                </tr>
+                <tr data-audit-action="Ubah" data-audit-data="Transaksi" data-audit-user="Bendahara Babatan">
+                  <td class="nowrap">24 Okt 16.30</td>
+                  <td>Bendahara Babatan</td>
+                  <td><span class="badge-soft badge-warn">Ubah</span></td>
+                  <td>Transaksi &middot; keluar</td>
+                  <td class="audit-diff">Santunan kematian warga<br>catatan_publik: <span class="diff-old">(kosong)</span> &rarr; <span class="diff-new">dengan tambahan untuk kebutuhan pendidikan ahli waris</span></td>
+                </tr>
+                <tr data-audit-action="Ubah" data-audit-data="Pengaturan" data-audit-user="Admin Babatan">
+                  <td class="nowrap">20 Okt 10.15</td>
+                  <td>Admin Babatan</td>
+                  <td><span class="badge-soft badge-warn">Ubah</span></td>
+                  <td>Pengaturan</td>
+                  <td class="audit-diff">nama_bendahara: <span class="diff-old">(kosong)</span> &rarr; <span class="diff-new">Bendahara (contoh)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-3">
+            <span class="hint" data-audit-count>Menampilkan 7 dari 7 catatan</span>
+            <a class="link-app" href="log-audit.html">Berikutnya</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

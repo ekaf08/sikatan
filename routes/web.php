@@ -1,15 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Auth\GantiPasswordController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('fo.home');
-});
+// Beranda publik (tanpa login)
+Route::view('/', 'fo.home')->name('publik');
 
-Route::get('/login', function () {
-    return redirect()->route(auth()->check() ? 'dashboard' : 'login');
-});
+Route::redirect('/login', '/masuk');
 
 // Hanya untuk tamu (belum login)
 Route::middleware('guest')->group(function () {
@@ -17,13 +16,39 @@ Route::middleware('guest')->group(function () {
     Route::post('/masuk', [AuthController::class, 'store'])
         ->middleware('throttle:20,1')
         ->name('login.store');
+    Route::view('/lupa-password', 'pages.auth.lupa-password')->name('password.lupa');
+});
+
+// Cukup login (tanpa cek peran dan tanpa paksa.ganti)
+Route::middleware(['auth', 'nocache'])->group(function () {
+    Route::post('/keluar', [AuthController::class, 'destroy'])->name('logout');
+    Route::get('/ganti-password', [GantiPasswordController::class, 'edit'])->name('password.ganti');
+    Route::post('/ganti-password', [GantiPasswordController::class, 'update'])->name('password.ganti.simpan');
 });
 
 // Area bendahara dan admin
-Route::middleware(['auth', 'nocache', 'role:admin,bendahara'])->group(function () {
-    Route::post('/keluar', [AuthController::class, 'destroy'])->name('logout');
-
+Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->group(function () {
     Route::get('/dashboard', function () {
         return view('pages.dashboard');
     })->name('dashboard');
+
+    // Sementara memakai Route::view, ganti ke controller saat logika siap.
+    Route::view('/pemasukan', 'pages.pemasukan')->name('pemasukan');
+    Route::view('/pengeluaran', 'pages.pengeluaran')->name('pengeluaran');
+    Route::view('/transaksi', 'pages.transaksi')->name('transaksi');
+    Route::view('/mutasi-dana', 'pages.mutasi-dana')->name('mutasi-dana');
+    Route::view('/acara', 'pages.acara')->name('acara');
+    Route::view('/laporan', 'pages.laporan')->name('laporan');
+    Route::view('/log-audit', 'pages.log-audit')->name('log-audit');
+
+    Route::view('/master/wilayah', 'pages.master-wilayah')->name('master-wilayah');
+    Route::view('/master/pos-dana', 'pages.master-pos-dana')->name('master-pos-dana');
+    Route::view('/master/kategori', 'pages.master-kategori')->name('master-kategori');
+});
+
+// Khusus admin
+Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin'])->group(function () {
+    Route::get('/pengaturan', [AkunController::class, 'index'])->name('pengaturan');
+    Route::post('/pengaturan/akun/{user}/atur-ulang-password', [AkunController::class, 'aturUlangPassword'])
+        ->name('akun.atur-ulang-password');
 });

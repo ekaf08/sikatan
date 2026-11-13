@@ -83,7 +83,7 @@
                                 type="checkbox" {{ old('remember') ? 'checked' : '' }}>
                             <label class="form-check-label" for="ingatSaya">Ingat saya di perangkat ini</label>
                         </div>
-                        <a class="link-app" href="#">Lupa kata sandi?</a>
+                        <a class="link-app" href="{{ route('password.lupa') }}">Lupa kata sandi?</a>
                     </div>
 
                     <button class="btn btn-brand w-100 mt-2" type="submit" style="min-height:48px">

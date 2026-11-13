@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acara Sedekah Bumi &mdash; Kas Desa Babatan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+      <a class="brand-link" href="index.html">
+        <span class="brand-mark"><i class="bi bi-wallet2"></i></span>
+        <span class="brand-text">
+          <span class="brand-title">Kas Desa Babatan</span>
+          <span class="brand-sub">Area bendahara</span>
+        </span>
+      </a>
+      <button class="sidebar-close d-lg-none" type="button" id="sidebarClose" aria-label="Tutup menu">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navigasi utama">
+      <a class="nav-item-app" href="index.html" data-label="Dashboard">
+        <i class="bi bi-grid-1x2"></i><span class="nav-text">Dashboard</span>
+      </a>
+
+      <div class="nav-section"><span>Transaksi</span></div>
+      <a class="nav-item-app" href="pemasukan.html" data-label="Pemasukan">
+        <i class="bi bi-arrow-down-left-circle"></i><span class="nav-text">Pemasukan</span>
+      </a>
+      <a class="nav-item-app" href="pengeluaran.html" data-label="Pengeluaran">
+        <i class="bi bi-arrow-up-right-circle"></i><span class="nav-text">Pengeluaran</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Daftar transaksi">
+        <i class="bi bi-list-ul"></i><span class="nav-text">Daftar transaksi</span>
+      </a>
+      <a class="nav-item-app" href="mutasi-dana.html" data-label="Mutasi dana">
+        <i class="bi bi-arrow-left-right"></i><span class="nav-text">Mutasi dana</span>
+      </a>
+
+      <div class="nav-section"><span>Kegiatan dan laporan</span></div>
+      <a class="nav-item-app active" href="acara.html" aria-current="page" data-label="Acara sedekah bumi">
+        <i class="bi bi-calendar-event"></i><span class="nav-text">Acara sedekah bumi</span>
+      </a>
+      <a class="nav-item-app" href="laporan.html" data-label="Laporan dan ekspor">
+        <i class="bi bi-file-earmark-bar-graph"></i><span class="nav-text">Laporan dan ekspor</span>
+      </a>
+
+      <div class="nav-section"><span>Pengelolaan</span></div>
+      <a class="nav-item-app" href="master-wilayah.html" data-label="Master data">
+        <i class="bi bi-database"></i><span class="nav-text">Master data</span>
+      </a>
+      <div class="nav-sub">
+        <a class="nav-sub-item" href="master-wilayah.html">Wilayah RW/RT</a>
+        <a class="nav-sub-item" href="master-pos-dana.html">Pos dana</a>
+        <a class="nav-sub-item" href="master-kategori.html">Kategori</a>
+      </div>
+      <a class="nav-item-app" href="pengaturan.html" data-label="Pengaturan">
+        <i class="bi bi-gear"></i><span class="nav-text">Pengaturan</span>
+      </a>
+      <a class="nav-item-app" href="log-audit.html" data-label="Log audit">
+        <i class="bi bi-shield-check"></i><span class="nav-text">Log audit</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <span class="avatar">B</span>
+        <span class="user-text">
+          <strong>Bendahara Babatan</strong>
+          <small>bendahara@babatan.test</small>
+        </span>
+      </div>
+      <a class="nav-item-app" href="login.html" data-label="Keluar">
+        <i class="bi bi-box-arrow-right"></i><span class="nav-text">Keluar</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <button class="btn-icon" type="button" id="sidebarToggle" aria-label="Ciutkan sidebar" aria-controls="appSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar-inset"></i>
+      </button>
+
+      <div class="topbar-title d-none d-md-flex">
+        <strong>Acara sedekah bumi</strong>
+        <small>Anggaran dan realisasi</small>
+      </div>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="topbar-search d-none d-lg-block">
+          <i class="bi bi-search"></i>
+          <input class="form-control" type="search" placeholder="Cari item anggaran..." aria-label="Cari">
+        </div>
+
+        <button class="btn-icon position-relative" type="button" aria-label="Notifikasi">
+          <i class="bi bi-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="dropdown">
+          <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu pengguna">
+            <span class="avatar" style="width:34px;height:34px;font-size:13px">B</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-muted-app">Masuk sebagai Bendahara</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+            <li><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content" data-acara>
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+          <h1 class="page-title" data-acara-title>Sedekah Bumi 2026</h1>
+          <p class="page-subtitle" data-acara-subtitle>Status: berjalan. Anggaran dan realisasi per item.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <select class="form-select" data-acara-select aria-label="Ganti acara" style="min-width:190px">
+            <option selected data-title="Sedekah Bumi 2026" data-subtitle="Status: berjalan. Anggaran dan realisasi per item.">Sedekah Bumi 2026</option>
+            <option data-title="Sedekah Bumi 2025" data-subtitle="Status: selesai. Laporan sudah ditutup.">Sedekah Bumi 2025</option>
+          </select>
+          <button class="btn btn-brand" type="button" data-bs-toggle="modal" data-bs-target="#modalAnggaran">
+            <i class="bi bi-plus-lg"></i>Tambah item anggaran
+          </button>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
+        <div class="col">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <span class="stat-label">Total anggaran</span>
+              <span class="stat-value">Rp33.000.000</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <span class="stat-label">Realisasi</span>
+              <span class="stat-value is-out">Rp7.000.000</span>
+              <span class="stat-sub">21% dari anggaran</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <span class="stat-label">Sisa anggaran</span>
+              <span class="stat-value is-in">Rp26.000.000</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card stat-card h-100">
+            <div class="card-body">
+              <span class="stat-label">Saldo kas sedekah bumi</span>
+              <span class="stat-value">Rp18.350.000</span>
+              <span class="stat-sub">Kurang Rp7.650.000 dari sisa anggaran</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h2 class="section-title mb-3">Anggaran vs realisasi</h2>
+          <div class="table-responsive">
+            <table class="table-app">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th class="num">Anggaran</th>
+                  <th class="num">Realisasi</th>
+                  <th class="num">Sisa</th>
+                  <th style="min-width:180px">Terpakai</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Konsumsi</td>
+                  <td class="num">Rp15.000.000</td>
+                  <td class="num">Rp4.500.000</td>
+                  <td class="num">Rp10.500.000</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="meter flex-grow-1"><i style="width:30%"></i></div>
+                      <span class="fw-semibold nowrap" style="font-size:13px;min-width:36px">30%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Sewa tenda dan pengeras suara</td>
+                  <td class="num">Rp6.000.000</td>
+                  <td class="num">Rp2.500.000</td>
+                  <td class="num">Rp3.500.000</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="meter flex-grow-1"><i style="width:42%"></i></div>
+                      <span class="fw-semibold nowrap" style="font-size:13px;min-width:36px">42%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Hiburan (karawitan atau wayang)</td>
+                  <td class="num">Rp10.000.000</td>
+                  <td class="num">Rp0</td>
+                  <td class="num">Rp10.000.000</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="meter flex-grow-1"><i style="width:0%"></i></div>
+                      <span class="fw-semibold nowrap" style="font-size:13px;min-width:36px">0%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Dokumentasi dan lain-lain</td>
+                  <td class="num">Rp2.000.000</td>
+                  <td class="num">Rp0</td>
+                  <td class="num">Rp2.000.000</td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="meter flex-grow-1"><i style="width:0%"></i></div>
+                      <span class="fw-semibold nowrap" style="font-size:13px;min-width:36px">0%</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="fw-bold">Total</td>
+                  <td class="num fw-bold">Rp33.000.000</td>
+                  <td class="num fw-bold">Rp7.000.000</td>
+                  <td class="num fw-bold">Rp26.000.000</td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="section-title mb-2">Pengeluaran terkait acara</h2>
+              <div class="recent-row">
+                <span>06 Nov &middot; Uang muka konsumsi sedekah bumi</span>
+                <strong>Rp4.500.000</strong>
+              </div>
+              <div class="recent-row">
+                <span>05 Nov &middot; Uang muka sewa tenda dan pengeras suara</span>
+                <strong>Rp2.500.000</strong>
+              </div>
+              <p class="hint mt-3 mb-0">Setiap pengeluaran dihubungkan ke acara lewat formulir Catat pengeluaran.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="section-title mb-2">Pemasukan iuran sedekah bumi</h2>
+              <div class="recent-row">
+                <span>RW 01 (7 RT)</span>
+                <strong>Rp7.900.000</strong>
+              </div>
+              <div class="recent-row">
+                <span>RW 02 (8 RT)</span>
+                <strong>Rp9.150.000</strong>
+              </div>
+              <div class="recent-row">
+                <span class="fw-semibold">Total terkumpul</span>
+                <strong>Rp17.050.000</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal fade" id="modalAnggaran" tabindex="-1" aria-labelledby="modalAnggaranLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="modalAnggaranLabel">Tambah item anggaran</h2>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <form onsubmit="return false">
+          <div class="modal-body d-flex flex-column gap-3">
+            <div>
+              <label class="form-label-app" for="anggaranItem">Nama item</label>
+              <input class="form-control" id="anggaranItem" type="text" placeholder="Contoh: Panggung dan dekorasi">
+            </div>
+            <div>
+              <label class="form-label-app" for="anggaranNominal">Anggaran (Rp)</label>
+              <input class="form-control" id="anggaranNominal" type="text" placeholder="Contoh: 3.000.000">
+            </div>
+            <div>
+              <label class="form-label-app" for="anggaranKet">Keterangan</label>
+              <textarea class="form-control" id="anggaranKet" placeholder="Catatan singkat item ini"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-brand" type="button" data-bs-dismiss="modal">Batal</button>
+            <button class="btn btn-brand" type="submit">Simpan item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

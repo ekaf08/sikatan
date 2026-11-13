@@ -6,8 +6,8 @@
             <p class="page-subtitle">Kamis, 12 November 2026</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <a class="btn btn-brand" href="pemasukan.html"><i class="bi bi-plus-lg"></i>Catat pemasukan</a>
-            <a class="btn btn-outline-brand" href="transaksi.html"><i class="bi bi-dash-lg"></i>Catat
+            <a class="btn btn-brand" href="{{ route('pemasukan') }}"><i class="bi bi-plus-lg"></i>Catat pemasukan</a>
+            <a class="btn btn-outline-brand" href="{{ route('pengeluaran') }}"><i class="bi bi-dash-lg"></i>Catat
                 pengeluaran</a>
         </div>
     </div>
@@ -55,7 +55,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-3">
                 <h2 class="section-title">Setoran iuran kematian, Minggu 8 Nov</h2>
-                <a class="link-app" href="pemasukan.html">Catat setoran</a>
+                <a class="link-app" href="{{ route('pemasukan') }}">Catat setoran</a>
             </div>
 
             <span class="lbl mb-2">RW 01</span>
@@ -89,7 +89,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline gap-2 mb-2">
                         <h2 class="section-title">Transaksi terbaru</h2>
-                        <a class="link-app" href="transaksi.html">Lihat semua</a>
+                        <a class="link-app" href="{{ route('transaksi') }}">Lihat semua</a>
                     </div>
                     <div class="table-responsive">
                         <table class="table-app">

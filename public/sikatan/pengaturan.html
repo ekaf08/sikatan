@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pengaturan &mdash; Kas Desa Babatan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/app.css" rel="stylesheet">
+</head>
+<body>
+  <aside class="app-sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+      <a class="brand-link" href="index.html">
+        <span class="brand-mark"><i class="bi bi-wallet2"></i></span>
+        <span class="brand-text">
+          <span class="brand-title">Kas Desa Babatan</span>
+          <span class="brand-sub">Area bendahara</span>
+        </span>
+      </a>
+      <button class="sidebar-close d-lg-none" type="button" id="sidebarClose" aria-label="Tutup menu">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navigasi utama">
+      <a class="nav-item-app" href="index.html" data-label="Dashboard">
+        <i class="bi bi-grid-1x2"></i><span class="nav-text">Dashboard</span>
+      </a>
+
+      <div class="nav-section"><span>Transaksi</span></div>
+      <a class="nav-item-app" href="pemasukan.html" data-label="Pemasukan">
+        <i class="bi bi-arrow-down-left-circle"></i><span class="nav-text">Pemasukan</span>
+      </a>
+      <a class="nav-item-app" href="pengeluaran.html" data-label="Pengeluaran">
+        <i class="bi bi-arrow-up-right-circle"></i><span class="nav-text">Pengeluaran</span>
+      </a>
+      <a class="nav-item-app" href="transaksi.html" data-label="Daftar transaksi">
+        <i class="bi bi-list-ul"></i><span class="nav-text">Daftar transaksi</span>
+      </a>
+      <a class="nav-item-app" href="mutasi-dana.html" data-label="Mutasi dana">
+        <i class="bi bi-arrow-left-right"></i><span class="nav-text">Mutasi dana</span>
+      </a>
+
+      <div class="nav-section"><span>Kegiatan dan laporan</span></div>
+      <a class="nav-item-app" href="acara.html" data-label="Acara sedekah bumi">
+        <i class="bi bi-calendar-event"></i><span class="nav-text">Acara sedekah bumi</span>
+      </a>
+      <a class="nav-item-app" href="laporan.html" data-label="Laporan dan ekspor">
+        <i class="bi bi-file-earmark-bar-graph"></i><span class="nav-text">Laporan dan ekspor</span>
+      </a>
+
+      <div class="nav-section"><span>Pengelolaan</span></div>
+      <a class="nav-item-app" href="master-wilayah.html" data-label="Master data">
+        <i class="bi bi-database"></i><span class="nav-text">Master data</span>
+      </a>
+      <div class="nav-sub">
+        <a class="nav-sub-item" href="master-wilayah.html">Wilayah RW/RT</a>
+        <a class="nav-sub-item" href="master-pos-dana.html">Pos dana</a>
+        <a class="nav-sub-item" href="master-kategori.html">Kategori</a>
+      </div>
+      <a class="nav-item-app active" href="pengaturan.html" aria-current="page" data-label="Pengaturan">
+        <i class="bi bi-gear"></i><span class="nav-text">Pengaturan</span>
+      </a>
+      <a class="nav-item-app" href="log-audit.html" data-label="Log audit">
+        <i class="bi bi-shield-check"></i><span class="nav-text">Log audit</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-mini">
+        <span class="avatar">B</span>
+        <span class="user-text">
+          <strong>Bendahara Babatan</strong>
+          <small>bendahara@babatan.test</small>
+        </span>
+      </div>
+      <a class="nav-item-app" href="login.html" data-label="Keluar">
+        <i class="bi bi-box-arrow-right"></i><span class="nav-text">Keluar</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-main">
+    <header class="app-topbar">
+      <button class="btn-icon" type="button" id="sidebarToggle" aria-label="Ciutkan sidebar" aria-controls="appSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar-inset"></i>
+      </button>
+
+      <div class="topbar-title d-none d-md-flex">
+        <strong>Pengaturan</strong>
+        <small>Kop, penandatangan, akun</small>
+      </div>
+
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="topbar-search d-none d-lg-block">
+          <i class="bi bi-search"></i>
+          <input class="form-control" type="search" placeholder="Cari pengaturan..." aria-label="Cari">
+        </div>
+
+        <button class="btn-icon position-relative" type="button" aria-label="Notifikasi">
+          <i class="bi bi-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+
+        <div class="dropdown">
+          <button class="btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Menu pengguna">
+            <span class="avatar" style="width:34px;height:34px;font-size:13px">B</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><span class="dropdown-item-text small text-muted-app">Masuk sebagai Bendahara</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-person me-2"></i>Profil</a></li>
+            <li><a class="dropdown-item" href="pengaturan.html"><i class="bi bi-gear me-2"></i>Pengaturan</a></li>
+            <li><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <div class="mb-4">
+        <h1 class="page-title">Pengaturan</h1>
+        <p class="page-subtitle">Kop laporan, penandatangan, nominal standar, dan akun pengguna.</p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <form class="card h-100" data-demo-form data-demo-message="Pengaturan disimpan (contoh)." onsubmit="return false">
+            <div class="card-body d-flex flex-column gap-3">
+              <h2 class="section-title">Kop laporan</h2>
+              <div>
+                <label class="form-label-app" for="setNamaDesa">Nama desa</label>
+                <input class="form-control" id="setNamaDesa" type="text" value="Desa Babatan">
+              </div>
+              <div>
+                <label class="form-label-app" for="setKop1">Baris kop 1</label>
+                <input class="form-control" id="setKop1" type="text" value="PEMERINTAH DESA BABATAN">
+              </div>
+              <div>
+                <label class="form-label-app" for="setKop2">Baris kop 2</label>
+                <input class="form-control" id="setKop2" type="text" value="LAPORAN KEUANGAN KAS WARGA">
+              </div>
+              <div>
+                <label class="form-label-app" for="setAlamat">Alamat pada kop</label>
+                <input class="form-control" id="setAlamat" type="text" value="Alamat desa diisi di sini">
+              </div>
+
+              <h2 class="section-title border-top pt-3 mt-2">Penandatangan laporan</h2>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label-app" for="setBendahara">Nama bendahara</label>
+                  <input class="form-control" id="setBendahara" type="text" value="Bendahara (contoh)">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label-app" for="setKetua">Nama ketua</label>
+                  <input class="form-control" id="setKetua" type="text" value="Ketua (contoh)">
+                </div>
+              </div>
+
+              <h2 class="section-title border-top pt-3 mt-2">Nominal standar</h2>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label-app" for="setIuran">Iuran kematian per KK per minggu (Rp)</label>
+                  <input class="form-control" id="setIuran" type="text" value="5.000">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label-app" for="setSantunan">Santunan kematian standar (Rp)</label>
+                  <input class="form-control" id="setSantunan" type="text" value="2.000.000">
+                </div>
+              </div>
+              <p class="hint mb-0">Mengubah nominal standar tidak mengubah transaksi yang sudah tercatat.</p>
+
+              <div class="notice notice-green" data-demo-feedback hidden></div>
+
+              <div>
+                <button class="btn btn-brand" type="submit">Simpan pengaturan</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-lg-5 d-flex flex-column gap-3">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="section-title mb-2">Akun pengguna</h2>
+              <div class="recent-row">
+                <div>
+                  <strong class="d-block">Bendahara Babatan</strong>
+                  <span class="hint">bendahara@babatan.test</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-soft badge-in">Bendahara</span>
+                  <a class="btn-ghost" href="#" data-bs-toggle="modal" data-bs-target="#modalAkun">Ubah</a>
+                </div>
+              </div>
+              <div class="recent-row">
+                <div>
+                  <strong class="d-block">Admin Babatan</strong>
+                  <span class="hint">admin@babatan.test</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-soft badge-in">Admin</span>
+                  <a class="btn-ghost" href="#" data-bs-toggle="modal" data-bs-target="#modalAkun">Ubah</a>
+                </div>
+              </div>
+              <button class="btn btn-outline-brand w-100 mt-3" type="button" data-bs-toggle="modal" data-bs-target="#modalAkun">
+                <i class="bi bi-plus-lg"></i>Tambah akun
+              </button>
+            </div>
+          </div>
+
+          <form class="card" data-demo-form data-demo-message="Kata sandi diperbarui (contoh)." onsubmit="return false">
+            <div class="card-body d-flex flex-column gap-3">
+              <h2 class="section-title">Ganti kata sandi</h2>
+              <div>
+                <label class="form-label-app" for="setPassLama">Kata sandi saat ini</label>
+                <input class="form-control" id="setPassLama" type="password" value="password">
+              </div>
+              <div>
+                <label class="form-label-app" for="setPassBaru">Kata sandi baru</label>
+                <input class="form-control" id="setPassBaru" type="password" placeholder="Minimal 8 karakter">
+              </div>
+              <div class="notice notice-green" data-demo-feedback hidden></div>
+              <div>
+                <button class="btn btn-brand" type="submit">Perbarui kata sandi</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal fade" id="modalAkun" tabindex="-1" aria-labelledby="modalAkunLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="modalAkunLabel">Tambah / ubah akun</h2>
+          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <form onsubmit="return false">
+          <div class="modal-body d-flex flex-column gap-3">
+            <div>
+              <label class="form-label-app" for="akunNama">Nama pengguna</label>
+              <input class="form-control" id="akunNama" type="text" placeholder="Contoh: Sekretaris Babatan">
+            </div>
+            <div>
+              <label class="form-label-app" for="akunEmail">Email</label>
+              <input class="form-control" id="akunEmail" type="email" placeholder="nama@babatan.test">
+            </div>
+            <div>
+              <label class="form-label-app" for="akunPeran">Peran</label>
+              <select class="form-select" id="akunPeran">
+                <option>Bendahara</option>
+                <option>Admin</option>
+                <option>Hanya lihat</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label-app" for="akunPass">Kata sandi awal</label>
+              <input class="form-control" id="akunPass" type="password" placeholder="Minimal 8 karakter">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-brand" type="button" data-bs-dismiss="modal">Batal</button>
+            <button class="btn btn-brand" type="submit">Simpan akun</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -23,11 +23,12 @@
                 </div>
 
                 <nav class="public-nav" aria-label="Navigasi publik">
-                    <a class="active" href="publik.html" aria-current="page">Beranda</a>
-                    <a href="transaksi.html">Pengeluaran</a>
-                    <a href="pemasukan.html">Pemasukan</a>
-                    <a href="transaksi.html">Laporan</a>
-                    <a href="login.html">Masuk bendahara</a>
+                    <a class="active" href="{{ route('publik') }}" aria-current="page">Beranda</a>
+                    {{-- TODO: halaman publik Pengeluaran / Pemasukan / Laporan --}}
+                    <a href="#">Pengeluaran</a>
+                    <a href="#">Pemasukan</a>
+                    <a href="#">Laporan</a>
+                    <a href="{{ route('login') }}">Masuk bendahara</a>
                 </nav>
             </div>
         </header>
@@ -159,7 +160,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline gap-2 mb-2">
                                 <h2 class="section-title">Pengeluaran terbaru</h2>
-                                <a class="link-app" href="transaksi.html">Lihat semua</a>
+                                <a class="link-app" href="#">Lihat semua</a>
                             </div>
                             <div class="table-responsive">
                                 <table class="table-app">
@@ -226,7 +227,7 @@
                         privasi keluarga yang berduka, nama penerima santunan dan foto nota tertentu tidak ditampilkan.
                     </p>
                 </div>
-                <a class="btn btn-brand" href="transaksi.html">Lihat pengeluaran</a>
+                <a class="btn btn-brand" href="#">Lihat pengeluaran</a>
             </div>
 
             <footer class="d-flex flex-wrap justify-content-between gap-2 py-4 mt-2 hint">

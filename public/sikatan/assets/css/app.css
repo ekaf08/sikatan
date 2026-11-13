@@ -220,6 +220,37 @@ a {
   text-overflow: ellipsis;
 }
 
+.nav-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0 4px 46px;
+}
+
+.nav-sub-item {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: #bfd3cb;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-sub-item:hover {
+  background: var(--ks-green-muted);
+  color: #fff;
+}
+
+.nav-sub-item.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 600;
+}
+
 .sidebar-footer {
   padding: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -748,6 +779,16 @@ textarea.form-control {
   box-shadow: 0 0 0 0.2rem rgba(47, 117, 97, 0.15);
 }
 
+.form-check.d-flex {
+  padding-left: 0;
+}
+
+.form-check.d-flex .form-check-input {
+  flex: 0 0 auto;
+  margin-left: 0;
+  float: none;
+}
+
 .form-check-label {
   font-size: 14px;
   padding-left: 6px;
@@ -897,6 +938,253 @@ textarea.form-control {
   border-radius: 8px !important;
   margin: 0 2px;
   font-size: 14px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sub navigation                                                      */
+/* ------------------------------------------------------------------ */
+
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Upload / attachments                                                */
+/* ------------------------------------------------------------------ */
+
+.upload-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.upload-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 90px;
+  padding: 8px;
+  border: 1px dashed #a9a392;
+  border-radius: var(--ks-radius-sm);
+  background: #faf8f2;
+  color: var(--ks-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.upload-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 90px;
+  padding: 8px;
+  border: 1px dashed #1f5c4a;
+  border-radius: var(--ks-radius-sm);
+  background: #fff;
+  color: #1f5c4a;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.upload-add:hover {
+  background: var(--ks-soft-2);
+}
+
+/* ------------------------------------------------------------------ */
+/* Preview panels                                                      */
+/* ------------------------------------------------------------------ */
+
+.preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  border-radius: var(--ks-radius-sm);
+  background: var(--ks-bg);
+}
+
+.preview-meta {
+  font-size: 12px;
+  color: var(--ks-muted);
+}
+
+.preview-desc {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.preview-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ks-green);
+  font-variant-numeric: tabular-nums;
+}
+
+.balance-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  border-radius: var(--ks-radius-sm);
+  background: var(--ks-bg);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.balance-preview .balance-title {
+  font-size: 12px;
+  color: var(--ks-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Master data                                                         */
+/* ------------------------------------------------------------------ */
+
+.table-app tr.group-row td {
+  background: var(--ks-soft);
+  color: var(--ks-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 6px;
+  background: var(--ks-amber-bg);
+  color: var(--ks-amber-text);
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.tag-danger {
+  background: var(--ks-warning-bg);
+  color: var(--ks-warning-text);
+}
+
+.badge-warn {
+  background: var(--ks-amber-bg);
+  color: var(--ks-amber-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* Activity, budget & audit                                            */
+/* ------------------------------------------------------------------ */
+
+.meter {
+  height: 10px;
+  min-width: 120px;
+  border-radius: 99px;
+  background: #e7e3d6;
+  overflow: hidden;
+}
+
+.meter > i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--ks-green-soft);
+}
+
+.audit-diff {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #3f4a44;
+}
+
+.audit-diff .diff-old {
+  color: #9a3412;
+  text-decoration: line-through;
+}
+
+.audit-diff .diff-new {
+  color: var(--ks-success-text);
+  font-weight: 600;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ */
+/* Report preview                                                      */
+/* ------------------------------------------------------------------ */
+
+.report-paper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 40px 44px;
+  border: 1px solid #d9d5c8;
+  background: #fff;
+}
+
+.report-head {
+  padding-bottom: 12px;
+  border-bottom: 3px double #111;
+  text-align: center;
+}
+
+.report-head .gov {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.report-head .report-name {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.report-head .report-period {
+  font-size: 12px;
+}
+
+.report-section-title {
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.report-paper .table-app td {
+  font-size: 13px;
+  padding: 9px 8px;
+}
+
+.report-paper .table-app th {
+  padding: 8px;
+}
+
+.report-sign {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 12px;
+  font-size: 13px;
+}
+
+.report-sign > div {
+  min-width: 180px;
+  text-align: center;
+}
+
+.report-sign .sign-space {
+  height: 64px;
+}
+
+.report-sign strong {
+  font-weight: 700;
+  text-decoration: underline;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1148,6 +1436,10 @@ textarea.form-control {
   .login-form-wrap {
     padding: 32px 20px 48px;
   }
+
+  .report-paper {
+    padding: 24px 20px;
+  }
 }
 
 @media (min-width: 992px) {
@@ -1162,6 +1454,7 @@ textarea.form-control {
   body.sidebar-collapsed .brand-text,
   body.sidebar-collapsed .nav-text,
   body.sidebar-collapsed .nav-section span,
+  body.sidebar-collapsed .nav-sub,
   body.sidebar-collapsed .user-text {
     display: none;
   }
