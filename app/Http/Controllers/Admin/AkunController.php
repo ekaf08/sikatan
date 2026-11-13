@@ -28,7 +28,10 @@ class AkunController extends Controller
             'username' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
             'role' => ['required', Rule::in(['admin', 'bendahara'])],
-            'password' => ['required', 'string', Password::min(8)->letters()->numbers()],
+
+            // Kode lama: 'password' => ['required', 'string', Password::min(8)->letters()->numbers()],
+            // Kode baru: Hanya wajib 8 karakter, bebas (freetext)
+            'password' => ['required', 'string', Password::min(8)],
         ], [
             'name.required' => 'Nama pengguna wajib diisi.',
             'username.required' => 'Username wajib diisi.',
@@ -73,5 +76,54 @@ class AkunController extends Controller
             'password_sementara' => $sementara,
             'username_diatur_ulang' => $user->username,
         ]);
+    }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('users', 'username')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'role' => ['required', Rule::in(['admin', 'bendahara'])],
+            // Password opsional saat edit (jika kosong, jangan diubah)
+            'password' => ['nullable', 'string', Password::min(8)],
+        ], [
+            'name.required' => 'Nama pengguna wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'username.alpha_dash' => 'Username hanya boleh huruf, angka, garis bawah, dan tanda hubung.',
+            'username.unique' => 'Username sudah dipakai.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah dipakai.',
+            'role.in' => 'Peran tidak valid.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+        ]);
+
+        $user->name = $data['name'];
+        $user->username = $data['username'];
+        $user->email = $data['email'];
+        $user->role = $data['role'];
+
+        // Update password hanya jika form password diisi
+        if (!empty($data['password'])) {
+            $user->password = Hash::make($data['password']);
+            $user->harus_ganti_password = true; // Opsional: paksa ganti sandi jika direset admin
+        }
+
+        $user->save();
+
+        return back()->with('sukses', 'Data akun berhasil diperbarui.');
+    }
+
+    public function destroy(User $user): RedirectResponse
+    {
+        // Cegah admin menghapus akunnya sendiri
+        if (auth()->id() === $user->id) {
+            return back()->with('galat', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        $user->delete();
+
+        return back()->with('sukses', 'Akun berhasil dihapus.');
     }
 }
