@@ -24,28 +24,30 @@ class AuthController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'email' => ['required', 'email'],
+            // 'email' => ['required', 'email'],
+            'username' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            // 'email.required' => 'Email wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            // 'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
-        $kunci = $this->kunciPembatas($data['email'], $request->ip());
+        $kunci = $this->kunciPembatas($data['username'], $request->ip());
 
         if (RateLimiter::tooManyAttempts($kunci, self::BATAS_PERCOBAAN)) {
             $detik = RateLimiter::availableIn($kunci);
 
             throw ValidationException::withMessages([
-                'email' => "Terlalu banyak percobaan masuk. Coba lagi dalam {$detik} detik.",
+                'username' => "Terlalu banyak percobaan masuk. Coba lagi dalam {$detik} detik.",
             ]);
         }
 
         // 'aktif' => true membuat akun nonaktif ditolak dengan pesan yang sama
         // seperti kata sandi salah, supaya tidak membocorkan status akun.
         $berhasil = Auth::attempt(
-            ['email' => $data['email'], 'password' => $data['password'], 'aktif' => true],
+            ['username' => $data['username'], 'password' => $data['password'], 'aktif' => true],
             $request->boolean('remember')
         );
 
@@ -53,7 +55,7 @@ class AuthController extends Controller
             RateLimiter::hit($kunci, self::DETIK_BLOKIR);
 
             throw ValidationException::withMessages([
-                'email' => 'Email atau kata sandi salah, atau akun tidak aktif.',
+                'username' => 'Username atau kata sandi salah, atau akun tidak aktif.',
             ]);
         }
 
@@ -73,8 +75,8 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    private function kunciPembatas(string $email, ?string $ip): string
+    private function kunciPembatas(string $username, ?string $ip): string
     {
-        return Str::transliterate(Str::lower($email) . '|' . $ip);
+        return Str::transliterate(Str::lower($username) . '|' . $ip);
     }
 }

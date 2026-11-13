@@ -51,9 +51,14 @@
                     @endif
 
                     <div>
-                        <label class="form-label-app" for="loginEmail">Email</label>
+                        {{-- <label class="form-label-app" for="loginEmail">Email</label>
                         <input class="form-control @error('email') is-invalid @enderror" id="loginEmail" name="email"
-                            type="email" value="{{ old('email') }}" autocomplete="username" required autofocus>
+                            type="email" value="{{ old('email') }}" autocomplete="username" required autofocus> --}}
+
+                        <label class="form-label-app" for="loginUsername">Username</label>
+                        <input class="form-control @error('username') is-invalid @enderror" id="loginUsername"
+                            name="username" type="text" value="{{ old('username') }}" autocomplete="username"
+                            required autofocus>
                     </div>
 
                     <div>

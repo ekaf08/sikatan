@@ -35,7 +35,12 @@
                 </li>
                 <li><a class="dropdown-item" href="index.html"><i class="bi bi-gear me-2"></i>Pengaturan</a>
                 </li>
-                <li><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="dropdown-item" type="submit"><i
+                                class="bi bi-box-arrow-right me-2"></i>Keluar</button>
+                    </form>
             </ul>
         </div>
     </div>

@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Area bendahara dan admin
-Route::middleware(['auth', 'role:admin,bendahara'])->group(function () {
+Route::middleware(['auth', 'nocache', 'role:admin,bendahara'])->group(function () {
     Route::post('/keluar', [AuthController::class, 'destroy'])->name('logout');
 
     Route::get('/dashboard', function () {

@@ -22,11 +22,38 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+        'aktif',
+        'username',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'aktif' => 'boolean',
         ];
+    }
+
+    public function adalahAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function adalahBendahara(): bool
+    {
+        return $this->role === 'bendahara';
     }
 }
