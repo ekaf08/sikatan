@@ -15,7 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         //
         $middleware->trustProxies(at: '*');
 
-        $middleware->alias(['role' => \App\Http\Middleware\AccesRole::class]);
+        $middleware->alias([
+            'role' => \App\Http\Middleware\AccesRole::class,
+            'nocache' => \App\Http\Middleware\NoCache::class,
+        ]);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
     })
