@@ -17,7 +17,7 @@ class PenggunaSeeder extends Seeder
             [
                 'name' => 'Admin Babatan',
                 'password' => Hash::make('password'),
-                'peran' => 'admin',
+                'role' => 'admin',
                 'username' => 'admin',
                 'aktif' => true,
                 'created_at' => $sekarang,
@@ -30,7 +30,7 @@ class PenggunaSeeder extends Seeder
             [
                 'name' => 'Bendahara Babatan',
                 'password' => Hash::make('password'),
-                'peran' => 'bendahara',
+                'role' => 'bendahara',
                 'username' => 'bendahara',
                 'aktif' => true,
                 'created_at' => $sekarang,
