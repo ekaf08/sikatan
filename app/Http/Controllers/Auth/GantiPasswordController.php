@@ -18,7 +18,7 @@ class GantiPasswordController extends Controller
     {
         $pengguna = $request->user();
         $wajib = $pengguna->harus_ganti_password;
-        $bolehGantiLain = $pengguna->adalahAdmin() && ! $wajib;
+        $bolehGantiLain = $pengguna->adalahAdmin() && !$wajib;
 
         return view('pages.auth.ganti-password', [
             'wajib' => $wajib,
@@ -27,6 +27,7 @@ class GantiPasswordController extends Controller
         ]);
     }
 
+    // permintaan user untuk passowrd agar freetext 
     public function update(Request $request): RedirectResponse
     {
         $request->validate([
@@ -39,7 +40,7 @@ class GantiPasswordController extends Controller
 
         if ($menggantiLain) {
             abort_unless(
-                $pengguna->adalahAdmin() && ! $pengguna->harus_ganti_password,
+                $pengguna->adalahAdmin() && !$pengguna->harus_ganti_password,
                 403,
                 'Hanya admin yang dapat mengganti kata sandi pengguna lain.'
             );
@@ -50,16 +51,25 @@ class GantiPasswordController extends Controller
         }
 
         $aturan = [
-            'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+            // KODE LAMA: Menggunakan validasi huruf dan angka
+            // 'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+
+            // KODE BARU: Hanya wajib 8 karakter, tanpa validasi huruf besar/kecil/angka/simbol
+            'password' => ['required', 'confirmed', Password::min(8)],
         ];
 
         $pesan = [
             'password.required' => 'Kata sandi baru wajib diisi.',
             'password.confirmed' => 'Konfirmasi kata sandi baru tidak sama.',
             'password.min' => 'Kata sandi baru minimal 8 karakter.',
+
+            // CATATAN: Pesan di bawah ini bisa dibiarkan saja (tidak akan error), 
+            // atau bisa Anda hapus/hapus komentarnya jika nanti validasi huruf/angka diaktifkan kembali.
+            // 'password.letters' => 'Kata sandi harus mengandung minimal satu huruf.',
+            // 'password.numbers' => 'Kata sandi harus mengandung minimal satu angka.',
         ];
 
-        if (! $menggantiLain) {
+        if (!$menggantiLain) {
             $aturan['password_lama'] = ['required', 'current_password'];
             $aturan['password'][] = 'different:password_lama';
 
