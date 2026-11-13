@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pengaturan &mdash; Kas Desa Babatan')
+@section('title', 'Pengaturan — Kas Desa Babatan')
 
 @section('topbarTitle', 'Pengaturan')
 @section('topbarSubtitle', 'Kop, penandatangan, akun')
@@ -18,8 +18,26 @@
         </div>
     @endif
 
+    @if (session('akun_baru'))
+        <div class="notice notice-green mb-3">
+            Akun <strong>{{ session('akun_baru') }}</strong> berhasil dibuat. Pengguna akan diminta mengganti kata sandi
+            saat pertama kali masuk.
+        </div>
+    @endif
+
     @if (session('galat'))
         <div class="notice notice-amber mb-3">{{ session('galat') }}</div>
+    @endif
+
+    @if ($errors->any())
+        <div class="notice notice-amber mb-3">
+            <strong>Akun belum bisa dibuat:</strong>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $pesan)
+                    <li>{{ $pesan }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
     <div class="row g-3">
@@ -79,9 +97,9 @@
             </form>
         </div>
 
-        <div class="col-lg-5 d-flex flex-column gap-3">
-            <div class="card">
-                <div class="card-body">
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h2 class="section-title mb-3">Akun pengguna</h2>
 
                     <div class="table-responsive">
@@ -131,20 +149,94 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-body d-flex flex-column gap-2">
-                    <h2 class="section-title">Kata sandi</h2>
-                    <p class="hint mb-2">Untuk mengganti kata sandi akun Anda sendiri.</p>
-                    <div>
-                        <a class="btn btn-outline-brand" href="{{ route('password.ganti') }}">
-                            <i class="bi bi-key"></i>Ganti kata sandi
-                        </a>
-                    </div>
+                    <button class="btn btn-outline-brand w-100 mt-3" type="button" data-bs-toggle="modal"
+                        data-bs-target="#modalAkun">
+                        <i class="bi bi-plus-lg"></i>Tambah akun
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalAkun" tabindex="-1" aria-labelledby="modalAkunLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="modalAkunLabel">Tambah akun baru</h2>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <form method="POST" action="{{ route('akun.simpan') }}">
+                    @csrf
+                    <div class="modal-body d-flex flex-column gap-3">
+                        <div>
+                            <label class="form-label-app" for="akunNama">Nama pengguna</label>
+                            <input class="form-control @error('name') is-invalid @enderror" id="akunNama"
+                                name="name" type="text" value="{{ old('name') }}"
+                                placeholder="Contoh: Sekretaris Babatan" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="form-label-app" for="akunUsername">Username</label>
+                            <input class="form-control @error('username') is-invalid @enderror" id="akunUsername"
+                                name="username" type="text" value="{{ old('username') }}"
+                                placeholder="Contoh: sekretaris" autocomplete="off" required>
+                            @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <p class="hint mt-1">Dipakai untuk masuk. Hanya huruf, angka, garis bawah, dan tanda hubung.
+                            </p>
+                        </div>
+                        <div>
+                            <label class="form-label-app" for="akunEmail">Email</label>
+                            <input class="form-control @error('email') is-invalid @enderror" id="akunEmail"
+                                name="email" type="email" value="{{ old('email') }}"
+                                placeholder="nama@babatan.test" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="form-label-app" for="akunPeran">Peran</label>
+                            <select class="form-select @error('role') is-invalid @enderror" id="akunPeran"
+                                name="role" required>
+                                <option value="bendahara" @selected(old('role', 'bendahara') === 'bendahara')>Bendahara</option>
+                                <option value="admin" @selected(old('role') === 'admin')>Admin</option>
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="form-label-app" for="akunPass">Kata sandi awal</label>
+                            <input class="form-control @error('password') is-invalid @enderror" id="akunPass"
+                                name="password" type="password" placeholder="Minimal 8 karakter"
+                                autocomplete="new-password" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <p class="hint mt-1">Pengguna akan diminta mengganti kata sandi saat pertama masuk.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-brand" type="button" data-bs-dismiss="modal">Batal</button>
+                        <button class="btn btn-brand" type="submit">Simpan akun</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var el = document.getElementById("modalAkun");
+                if (el && window.bootstrap) {
+                    new bootstrap.Modal(el).show();
+                }
+            });
+        </script>
+    @endif
 @endsection

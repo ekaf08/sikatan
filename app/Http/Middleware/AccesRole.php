@@ -32,7 +32,9 @@ class AccesRole
                 ->withErrors(['email' => 'Akun Anda sudah tidak aktif.']);
         }
 
+        // dd($pengguna->role, $role);
         if (!in_array($pengguna->role, $role, true)) {
+            dd($pengguna->role, $role, 'weladalah');
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mutasi Dana &mdash; Kas Desa Babatan')
+@section('title', 'Mutasi Dana — Kas Desa Babatan')
 
 @section('topbarTitle', 'Mutasi dana')
 @section('topbarSubtitle', 'Pindah saldo antar pos')

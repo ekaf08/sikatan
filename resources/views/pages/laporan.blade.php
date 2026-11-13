@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Laporan dan Ekspor &mdash; Kas Desa Babatan')
+@section('title', 'Laporan dan Ekspor — Kas Desa Babatan')
 
 @section('topbarTitle', 'Laporan dan ekspor')
 @section('topbarSubtitle', 'Unduh laporan kas')

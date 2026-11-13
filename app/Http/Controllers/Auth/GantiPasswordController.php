@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
@@ -14,29 +16,73 @@ class GantiPasswordController extends Controller
 {
     public function edit(Request $request): View
     {
+        $pengguna = $request->user();
+        $wajib = $pengguna->harus_ganti_password;
+        $bolehGantiLain = $pengguna->adalahAdmin() && ! $wajib;
+
         return view('pages.auth.ganti-password', [
-            'wajib' => $request->user()->harus_ganti_password,
+            'wajib' => $wajib,
+            'daftarPengguna' => $bolehGantiLain ? User::orderBy('name')->get() : collect(),
+            'terpilih' => (int) $request->query('user'),
         ]);
     }
 
     public function update(Request $request): RedirectResponse
     {
         $request->validate([
-            'password_lama' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed', 'different:password_lama', Password::min(8)->letters()->numbers()],
-        ], [
-            'password_lama.current_password' => 'Kata sandi saat ini salah.',
-            'password.confirmed' => 'Konfirmasi kata sandi baru tidak sama.',
-            'password.different' => 'Kata sandi baru tidak boleh sama dengan yang lama.',
-            'password.min' => 'Kata sandi baru minimal 8 karakter.',
+            'user_id' => ['nullable', 'integer', Rule::exists('users', 'id')],
         ]);
 
-        $user = $request->user();
-        $user->password = Hash::make($request->password);
-        $user->harus_ganti_password = false;
-        $user->remember_token = Str::random(60);
-        $user->save();
+        $pengguna = $request->user();
+        $targetId = (int) $request->input('user_id');
+        $menggantiLain = $targetId > 0 && $targetId !== $pengguna->id;
 
-        return redirect()->route('dashboard')->with('status', 'Kata sandi berhasil diganti.');
+        if ($menggantiLain) {
+            abort_unless(
+                $pengguna->adalahAdmin() && ! $pengguna->harus_ganti_password,
+                403,
+                'Hanya admin yang dapat mengganti kata sandi pengguna lain.'
+            );
+
+            $target = User::findOrFail($targetId);
+        } else {
+            $target = $pengguna;
+        }
+
+        $aturan = [
+            'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
+        ];
+
+        $pesan = [
+            'password.required' => 'Kata sandi baru wajib diisi.',
+            'password.confirmed' => 'Konfirmasi kata sandi baru tidak sama.',
+            'password.min' => 'Kata sandi baru minimal 8 karakter.',
+        ];
+
+        if (! $menggantiLain) {
+            $aturan['password_lama'] = ['required', 'current_password'];
+            $aturan['password'][] = 'different:password_lama';
+
+            $pesan['password_lama.required'] = 'Kata sandi saat ini wajib diisi.';
+            $pesan['password_lama.current_password'] = 'Kata sandi saat ini salah.';
+            $pesan['password.different'] = 'Kata sandi baru tidak boleh sama dengan yang lama.';
+        }
+
+        $data = $request->validate($aturan, $pesan);
+
+        $target->password = Hash::make($data['password']);
+        $target->harus_ganti_password = false;
+        $target->remember_token = Str::random(60);
+        $target->save();
+
+        if ($target->is($pengguna)) {
+            return redirect()
+                ->route('dashboard')
+                ->with('status', 'Kata sandi berhasil diganti.');
+        }
+
+        return redirect()
+            ->route('password.ganti')
+            ->with('status', 'Kata sandi ' . $target->name . ' berhasil diganti.');
     }
 }

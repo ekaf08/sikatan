@@ -49,6 +49,7 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
 // Khusus admin
 Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin'])->group(function () {
     Route::get('/pengaturan', [AkunController::class, 'index'])->name('pengaturan');
+    Route::post('/pengaturan/akun', [AkunController::class, 'store'])->name('akun.simpan');
     Route::post('/pengaturan/akun/{user}/atur-ulang-password', [AkunController::class, 'aturUlangPassword'])
         ->name('akun.atur-ulang-password');
 });

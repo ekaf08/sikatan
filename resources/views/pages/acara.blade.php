@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Acara Sedekah Bumi &mdash; Kas Desa Babatan')
+@section('title', 'Acara Sedekah Bumi — Kas Desa Babatan')
 
 @section('topbarTitle', 'Acara sedekah bumi')
 @section('topbarSubtitle', 'Anggaran dan realisasi')
