@@ -64,7 +64,7 @@ class AkunController extends Controller
 
         $sementara = Str::password(10, symbols: false);
 
-        $user->password = Hash::make('password');
+        $user->password = Hash::make($sementara);
         $user->harus_ganti_password = true;
         $user->remember_token = Str::random(60);
         $user->save();
