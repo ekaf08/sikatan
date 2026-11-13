@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
@@ -41,7 +42,23 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::view('/laporan', 'pages.laporan')->name('laporan');
     Route::view('/log-audit', 'pages.log-audit')->name('log-audit');
 
-    Route::view('/master/wilayah', 'pages.master.wilayah')->name('master-wilayah');
+    Route::get('/master/wilayah', [WilayahController::class, 'index'])->name('master-wilayah');
+
+    Route::prefix('master/wilayah')->name('wilayah.')->group(function () {
+        Route::get('/statistik', [WilayahController::class, 'statistik'])->name('statistik');
+
+        Route::get('/rw/opsi', [WilayahController::class, 'opsiRw'])->name('rw.opsi');
+        Route::get('/rw/data', [WilayahController::class, 'dataRw'])->name('rw.data');
+        Route::post('/rw', [WilayahController::class, 'simpanRw'])->name('rw.store');
+        Route::put('/rw/{rw}', [WilayahController::class, 'ubahRw'])->name('rw.update');
+        Route::delete('/rw/{rw}', [WilayahController::class, 'hapusRw'])->name('rw.destroy');
+
+        Route::get('/rt/data', [WilayahController::class, 'dataRt'])->name('rt.data');
+        Route::post('/rt', [WilayahController::class, 'simpanRt'])->name('rt.store');
+        Route::put('/rt/{rt}', [WilayahController::class, 'ubahRt'])->name('rt.update');
+        Route::delete('/rt/{rt}', [WilayahController::class, 'hapusRt'])->name('rt.destroy');
+    });
+
     Route::view('/master/pos-dana', 'pages.master.pos-dana')->name('master-pos-dana');
     Route::view('/master/kategori', 'pages.master.kategori')->name('master-kategori');
 });
