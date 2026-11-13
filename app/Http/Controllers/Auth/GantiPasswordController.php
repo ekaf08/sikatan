@@ -14,7 +14,7 @@ class GantiPasswordController extends Controller
 {
     public function edit(Request $request): View
     {
-        return view('auth.ganti-password', [
+        return view('pages.auth.ganti-password', [
             'wajib' => $request->user()->harus_ganti_password,
         ]);
     }

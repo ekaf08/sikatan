@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Masuk &mdash; Kas Desa Babatan</title>
+        <title>Lupa Kata Sandi &mdash; Kas Desa Babatan</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -35,14 +35,36 @@
             </section>
 
             <section class="login-form-wrap">
-                <h2>Lupa kata sandi?</h2>
-                <p>Kata sandi diatur ulang oleh admin desa.</p>
-                <ol>
-                    <li>Hubungi admin dan sebutkan username Anda.</li>
-                    <li>Admin akan memberi kata sandi sementara.</li>
-                    <li>Masuk dengan kata sandi itu, lalu buat kata sandi baru.</li>
-                </ol>
-                <a href="{{ route('login') }}">Kembali ke halaman masuk</a>
+                <div class="login-form d-flex flex-column gap-3">
+                    <div class="mb-1">
+                        <span class="brand-mark mb-3"
+                            style="display:flex;background:var(--ks-soft-2);color:var(--ks-green)">
+                            <i class="bi bi-key"></i>
+                        </span>
+                        <h2>Lupa kata sandi?</h2>
+                        <p class="page-subtitle mt-1">Kata sandi hanya bisa diatur ulang oleh admin desa.</p>
+                    </div>
+
+                    <div class="notice notice-amber">
+                        <i class="bi bi-info-circle me-1"></i>Demi keamanan, kami tidak mengirim kata sandi lewat
+                        email atau pesan. Hubungi admin desa secara langsung.
+                    </div>
+
+                    <ol class="reset-steps my-2">
+                        <li>Hubungi admin desa dan sebutkan <strong>username</strong> Anda.</li>
+                        <li>Admin akan memberi <strong>kata sandi sementara</strong>.</li>
+                        <li>Masuk dengan kata sandi itu, lalu segera <strong>buat kata sandi baru</strong>.</li>
+                    </ol>
+
+                    <a class="btn btn-brand w-100" href="{{ route('login') }}" style="min-height:48px">
+                        <i class="bi bi-arrow-left"></i>Kembali ke halaman masuk
+                    </a>
+
+                    @if (Route::has('publik'))
+                        <a class="link-app text-center" href="{{ route('publik') }}">Lihat laporan publik tanpa
+                            login</a>
+                    @endif
+                </div>
             </section>
         </div>
     </body>

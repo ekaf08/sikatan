@@ -41,9 +41,9 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::view('/laporan', 'pages.laporan')->name('laporan');
     Route::view('/log-audit', 'pages.log-audit')->name('log-audit');
 
-    Route::view('/master/wilayah', 'pages.master-wilayah')->name('master-wilayah');
-    Route::view('/master/pos-dana', 'pages.master-pos-dana')->name('master-pos-dana');
-    Route::view('/master/kategori', 'pages.master-kategori')->name('master-kategori');
+    Route::view('/master/wilayah', 'pages.master.wilayah')->name('master-wilayah');
+    Route::view('/master/pos-dana', 'pages.master.pos-dana')->name('master-pos-dana');
+    Route::view('/master/kategori', 'pages.master.kategori')->name('master-kategori');
 });
 
 // Khusus admin
