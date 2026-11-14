@@ -55,6 +55,11 @@ class Transaksi extends Model
         return $this->belongsTo(Kategori::class, 'kategori_id')->withTrashed();
     }
 
+    public function rt(): BelongsTo
+    {
+        return $this->belongsTo(Rt::class, 'rt_id')->withTrashed();
+    }
+
     public function acara(): BelongsTo
     {
         return $this->belongsTo(Acara::class, 'acara_id')->withTrashed();

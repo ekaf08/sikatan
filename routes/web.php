@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\PemasukanController;
 use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\PosDanaController;
 use App\Http\Controllers\Admin\WilayahController;
@@ -36,8 +37,15 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         return view('pages.dashboard');
     })->name('dashboard');
 
-    // Sementara memakai Route::view, ganti ke controller saat logika siap.
-    Route::view('/pemasukan', 'pages.pemasukan')->name('pemasukan');
+    Route::get('/pemasukan', [PemasukanController::class, 'index'])->name('pemasukan');
+
+    Route::prefix('pemasukan')->name('pemasukan.')->group(function () {
+        Route::get('/statistik', [PemasukanController::class, 'statistik'])->name('statistik');
+        Route::get('/data', [PemasukanController::class, 'data'])->name('data');
+        Route::post('/', [PemasukanController::class, 'simpan'])->name('simpan');
+        Route::put('/{pemasukan}', [PemasukanController::class, 'ubah'])->name('update');
+        Route::delete('/{pemasukan}', [PemasukanController::class, 'hapus'])->name('destroy');
+    });
 
     Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran');
 
