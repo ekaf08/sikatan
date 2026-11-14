@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\PosDanaController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
@@ -70,7 +71,15 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         Route::delete('/{posDana}', [PosDanaController::class, 'hapus'])->name('destroy');
     });
 
-    Route::view('/master/kategori', 'pages.master.kategori')->name('master-kategori');
+    Route::get('/master/kategori', [KategoriController::class, 'index'])->name('master-kategori');
+
+    Route::prefix('master/kategori')->name('kategori.')->group(function () {
+        Route::get('/statistik', [KategoriController::class, 'statistik'])->name('statistik');
+        Route::get('/data', [KategoriController::class, 'data'])->name('data');
+        Route::post('/', [KategoriController::class, 'simpan'])->name('simpan');
+        Route::put('/{kategori}', [KategoriController::class, 'ubah'])->name('update');
+        Route::delete('/{kategori}', [KategoriController::class, 'hapus'])->name('destroy');
+    });
 });
 
 // Khusus admin
