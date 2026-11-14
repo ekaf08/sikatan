@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Admin\PosDanaController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
 use App\Http\Controllers\AuthController;
@@ -59,7 +60,16 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         Route::delete('/rt/{rt}', [WilayahController::class, 'hapusRt'])->name('rt.destroy');
     });
 
-    Route::view('/master/pos-dana', 'pages.master.pos-dana')->name('master-pos-dana');
+    Route::get('/master/pos-dana', [PosDanaController::class, 'index'])->name('master-pos-dana');
+
+    Route::prefix('master/pos-dana')->name('pos-dana.')->group(function () {
+        Route::get('/statistik', [PosDanaController::class, 'statistik'])->name('statistik');
+        Route::get('/data', [PosDanaController::class, 'data'])->name('data');
+        Route::post('/', [PosDanaController::class, 'simpan'])->name('simpan');
+        Route::put('/{posDana}', [PosDanaController::class, 'ubah'])->name('update');
+        Route::delete('/{posDana}', [PosDanaController::class, 'hapus'])->name('destroy');
+    });
+
     Route::view('/master/kategori', 'pages.master.kategori')->name('master-kategori');
 });
 
