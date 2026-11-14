@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
+use App\Models\Transaksi;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -86,6 +87,12 @@ class KategoriController extends Controller
     public function hapus(Kategori $kategori): JsonResponse
     {
         $nama = $kategori->nama;
+
+        if (Transaksi::withTrashed()->where('kategori_id', $kategori->id)->exists()) {
+            return response()->json([
+                'message' => "Kategori {$nama} tidak dapat dihapus karena sudah dipakai pada data transaksi.",
+            ], 422);
+        }
 
         try {
             $kategori->delete();

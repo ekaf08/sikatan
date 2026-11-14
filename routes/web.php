@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\PosDanaController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
@@ -37,7 +38,16 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
 
     // Sementara memakai Route::view, ganti ke controller saat logika siap.
     Route::view('/pemasukan', 'pages.pemasukan')->name('pemasukan');
-    Route::view('/pengeluaran', 'pages.pengeluaran')->name('pengeluaran');
+
+    Route::get('/pengeluaran', [PengeluaranController::class, 'index'])->name('pengeluaran');
+
+    Route::prefix('pengeluaran')->name('pengeluaran.')->group(function () {
+        Route::get('/statistik', [PengeluaranController::class, 'statistik'])->name('statistik');
+        Route::get('/data', [PengeluaranController::class, 'data'])->name('data');
+        Route::post('/', [PengeluaranController::class, 'simpan'])->name('simpan');
+        Route::put('/{pengeluaran}', [PengeluaranController::class, 'ubah'])->name('update');
+        Route::delete('/{pengeluaran}', [PengeluaranController::class, 'hapus'])->name('destroy');
+    });
     Route::view('/transaksi', 'pages.transaksi')->name('transaksi');
     Route::view('/mutasi-dana', 'pages.mutasi-dana')->name('mutasi-dana');
     Route::view('/acara', 'pages.acara')->name('acara');

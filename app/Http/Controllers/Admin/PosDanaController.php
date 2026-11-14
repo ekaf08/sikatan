@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\MutasiDana;
 use App\Models\PosDana;
+use App\Models\Transaksi;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,14 +40,16 @@ class PosDanaController extends Controller
                     ->selectRaw('COALESCE(SUM(nominal), 0)')
                     ->whereColumn('transaksi.pos_dana_id', 'pos_dana.id')
                     ->where('transaksi.jenis', 'masuk')
-                    ->where('transaksi.status', 'aktif');
+                    ->where('transaksi.status', 'aktif')
+                    ->whereNull('transaksi.deleted_at');
             }, 'total_masuk')
             ->selectSub(function ($sub) {
                 $sub->from('transaksi')
                     ->selectRaw('COALESCE(SUM(nominal), 0)')
                     ->whereColumn('transaksi.pos_dana_id', 'pos_dana.id')
                     ->where('transaksi.jenis', 'keluar')
-                    ->where('transaksi.status', 'aktif');
+                    ->where('transaksi.status', 'aktif')
+                    ->whereNull('transaksi.deleted_at');
             }, 'total_keluar')
             ->orderByDesc('id');
 
@@ -124,6 +128,18 @@ class PosDanaController extends Controller
     {
         $nama = $posDana->nama;
 
+        $dipakai = Transaksi::withTrashed()->where('pos_dana_id', $posDana->id)->exists()
+            || MutasiDana::withTrashed()
+                ->where('dari_pos_id', $posDana->id)
+                ->orWhere('ke_pos_id', $posDana->id)
+                ->exists();
+
+        if ($dipakai) {
+            return response()->json([
+                'message' => "Pos dana {$nama} tidak dapat dihapus karena sudah dipakai pada data transaksi atau mutasi dana.",
+            ], 422);
+        }
+
         try {
             $posDana->delete();
         } catch (QueryException $e) {
@@ -154,10 +170,12 @@ class PosDanaController extends Controller
     {
         $totalSaldoAwal = (float) PosDana::sum('saldo_awal');
         $totalMasuk = (float) DB::table('transaksi')
+            ->whereNull('deleted_at')
             ->where('status', 'aktif')
             ->where('jenis', 'masuk')
             ->sum('nominal');
         $totalKeluar = (float) DB::table('transaksi')
+            ->whereNull('deleted_at')
             ->where('status', 'aktif')
             ->where('jenis', 'keluar')
             ->sum('nominal');
