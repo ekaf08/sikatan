@@ -67,8 +67,10 @@
                             <th>Tanggal</th>
                             <th>Pos dana</th>
                             <th>Kategori</th>
+                            <th>Penerima</th>
                             <th>Acara</th>
                             <th class="text-end">Nominal</th>
+                            <th>Foto</th>
                             <th>Status</th>
                             <th class="text-end" style="width: 110px;">Aksi</th>
                         </tr>
@@ -141,6 +143,12 @@
                                 <input class="form-control" id="keluarAlasan" name="alasan_selisih" type="text"
                                     placeholder="Wajib bila nominal berbeda dari standar">
                                 <div class="invalid-feedback" data-error="alasan_selisih"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label-app" for="keluarPenerima">Penerima</label>
+                                <input class="form-control" id="keluarPenerima" name="penerima" type="text"
+                                    placeholder="Contoh: Toko Bangunan Jaya / Bpk. Dummy">
+                                <div class="invalid-feedback" data-error="penerima"></div>
                             </div>
                         </div>
 
@@ -546,6 +554,14 @@
                         }
                     },
                     {
+                        data: 'penerima',
+                        name: 'penerima',
+                        orderable: false,
+                        render: function(data) {
+                            return data ? escapeHtml(data) : '<span class="hint">&mdash;</span>';
+                        }
+                    },
+                    {
                         data: 'acara_nama',
                         name: 'acara_nama',
                         orderable: false,
@@ -563,6 +579,13 @@
                         render: function(data) {
                             return 'Rp' + data;
                         }
+                    },
+                    {
+                        data: 'foto',
+                        name: 'foto',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
                     },
                     {
                         data: 'status_label',
@@ -613,6 +636,7 @@
                 document.getElementById('keluarNominal').value = formatRibuan(this.getAttribute(
                     'data-nominal'));
                 document.getElementById('keluarAlasan').value = this.getAttribute('data-alasan');
+                document.getElementById('keluarPenerima').value = this.getAttribute('data-penerima') || '';
                 document.getElementById('keluarCatatanPublik').value = this.getAttribute(
                     'data-catatan-publik');
                 document.getElementById('keluarCatatanInternal').value = this.getAttribute(
@@ -643,6 +667,7 @@
                 data.append('acara_id', document.getElementById('keluarAcara').value);
                 data.append('nominal', angkaMentah(document.getElementById('keluarNominal').value));
                 data.append('alasan_selisih', document.getElementById('keluarAlasan').value.trim());
+                data.append('penerima', document.getElementById('keluarPenerima').value.trim());
                 data.append('catatan_publik', document.getElementById('keluarCatatanPublik').value.trim());
                 data.append('catatan_internal', document.getElementById('keluarCatatanInternal').value
                     .trim());

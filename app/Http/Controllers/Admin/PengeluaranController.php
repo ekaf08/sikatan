@@ -48,13 +48,31 @@ class PengeluaranController extends Controller
                 : '-')
             ->addColumn('pos_nama', fn (Transaksi $transaksi): string => $transaksi->posDana?->nama ?? '-')
             ->addColumn('kategori_nama', fn (Transaksi $transaksi): string => $transaksi->kategori?->nama ?? '-')
+            ->addColumn('penerima', fn (Transaksi $transaksi): ?string => $transaksi->penerima)
             ->addColumn('acara_nama', fn (Transaksi $transaksi): string => $transaksi->acara?->nama ?? '-')
             ->addColumn('nominal_format', fn (Transaksi $transaksi): string => number_format((float) $transaksi->nominal, 0, ',', '.'))
+            ->addColumn('foto', function (Transaksi $transaksi): string {
+                if ($transaksi->lampiran->isEmpty()) {
+                    return '';
+                }
+
+                $html = '<div class="d-flex flex-wrap gap-1">';
+
+                foreach ($transaksi->lampiran as $item) {
+                    $url = e(asset('storage/' . $item->lokasi_berkas));
+                    $html .= '<a href="' . $url . '" target="_blank" rel="noopener">'
+                        . '<img src="' . $url . '" alt="nota" style="width:38px;height:38px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
+                        . '</a>';
+                }
+
+                return $html . '</div>';
+            })
             ->addColumn('status_label', fn (Transaksi $transaksi): string => $transaksi->status === 'batal' ? 'Batal' : 'Aktif')
             ->addColumn('aksi', function (Transaksi $transaksi): string {
                 $catatanPublik = e($transaksi->catatan_publik ?? '');
                 $catatanInternal = e($transaksi->catatan_internal ?? '');
                 $alasanSelisih = e($transaksi->alasan_selisih ?? '');
+                $penerima = e($transaksi->penerima ?? '');
 
                 $lampiran = $transaksi->lampiran->map(fn (Lampiran $item): array => [
                     'id' => $item->id,
@@ -72,6 +90,7 @@ class PengeluaranController extends Controller
                     . ' data-acara="' . ($transaksi->acara_id ?? '') . '"'
                     . ' data-nominal="' . e((int) $transaksi->nominal) . '"'
                     . ' data-alasan="' . $alasanSelisih . '"'
+                    . ' data-penerima="' . $penerima . '"'
                     . ' data-catatan-publik="' . $catatanPublik . '"'
                     . ' data-catatan-internal="' . $catatanInternal . '"'
                     . ' data-sembunyikan="' . ($transaksi->sembunyikan_lampiran ? '1' : '0') . '"'
@@ -82,7 +101,7 @@ class PengeluaranController extends Controller
                     . ' data-info="' . e(($transaksi->kategori?->nama ?? 'Pengeluaran') . ' Rp' . number_format((float) $transaksi->nominal, 0, ',', '.')) . '" title="Hapus">'
                     . '<i class="bi bi-trash"></i></button>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['foto', 'aksi'])
             ->toJson();
     }
 
@@ -101,6 +120,7 @@ class PengeluaranController extends Controller
             'alasan_selisih' => $data['alasan_selisih'] ?? null,
             'catatan_publik' => $data['catatan_publik'] ?? null,
             'catatan_internal' => $data['catatan_internal'] ?? null,
+            'penerima' => $data['penerima'] ?? null,
             'sembunyikan_lampiran' => $request->boolean('sembunyikan_lampiran'),
             'status' => 'aktif',
         ]);
@@ -129,6 +149,7 @@ class PengeluaranController extends Controller
             'alasan_selisih' => $data['alasan_selisih'] ?? null,
             'catatan_publik' => $data['catatan_publik'] ?? null,
             'catatan_internal' => $data['catatan_internal'] ?? null,
+            'penerima' => $data['penerima'] ?? null,
             'sembunyikan_lampiran' => $request->boolean('sembunyikan_lampiran'),
         ]);
 
@@ -219,6 +240,7 @@ class PengeluaranController extends Controller
             'alasan_selisih' => ['nullable', 'string', 'max:1000'],
             'catatan_publik' => ['nullable', 'string', 'max:1000'],
             'catatan_internal' => ['nullable', 'string', 'max:2000'],
+            'penerima' => ['nullable', 'string', 'max:255'],
             'sembunyikan_lampiran' => ['nullable', 'boolean'],
             'lampiran' => ['nullable', 'array'],
             'lampiran.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192'],
@@ -291,6 +313,7 @@ class PengeluaranController extends Controller
             'alasan_selisih.max' => 'Alasan maksimal 1000 karakter.',
             'catatan_publik.max' => 'Catatan publik maksimal 1000 karakter.',
             'catatan_internal.max' => 'Catatan internal maksimal 2000 karakter.',
+            'penerima.max' => 'Nama penerima maksimal 255 karakter.',
             'lampiran.array' => 'Lampiran tidak valid.',
             'lampiran.*.image' => 'Berkas lampiran harus berupa gambar.',
             'lampiran.*.mimes' => 'Format gambar harus jpg, jpeg, png, webp, atau gif.',
