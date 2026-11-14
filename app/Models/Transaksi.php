@@ -27,6 +27,7 @@ class Transaksi extends Model
         'donatur_anonim',
         'tujuan',
         'catatan_internal',
+        'penerima',
         'catatan_publik',
         'alasan_selisih',
         'sembunyikan_lampiran',
