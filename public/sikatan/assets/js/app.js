@@ -360,63 +360,6 @@
   }
 
   /* ---------------------------------------------------------------- */
-  /* Ganti acara sedekah bumi                                          */
-  /* ---------------------------------------------------------------- */
-
-  document.querySelectorAll("[data-acara]").forEach(function (root) {
-    var select = root.querySelector("[data-acara-select]");
-    var titleEl = root.querySelector("[data-acara-title]");
-    var subtitleEl = root.querySelector("[data-acara-subtitle]");
-
-    if (!select) {
-      return;
-    }
-
-    function renderAcara() {
-      var option = select.options[select.selectedIndex];
-
-      if (!option) {
-        return;
-      }
-
-      if (titleEl && option.getAttribute("data-title")) {
-        titleEl.textContent = option.getAttribute("data-title");
-      }
-
-      if (subtitleEl && option.getAttribute("data-subtitle")) {
-        subtitleEl.textContent = option.getAttribute("data-subtitle");
-      }
-    }
-
-    select.addEventListener("change", renderAcara);
-  });
-
-  /* ---------------------------------------------------------------- */
-  /* Form contoh dengan umpan balik                                    */
-  /* ---------------------------------------------------------------- */
-
-  document.querySelectorAll("[data-demo-form]").forEach(function (form) {
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      var feedback = form.querySelector("[data-demo-feedback]");
-
-      if (!feedback) {
-        return;
-      }
-
-      feedback.hidden = false;
-      feedback.textContent =
-        form.getAttribute("data-demo-message") || "Perubahan disimpan (contoh).";
-
-      window.clearTimeout(form._demoTimer);
-      form._demoTimer = window.setTimeout(function () {
-        feedback.hidden = true;
-      }, 4000);
-    });
-  });
-
-  /* ---------------------------------------------------------------- */
   /* Penyaring log audit                                               */
   /* ---------------------------------------------------------------- */
 

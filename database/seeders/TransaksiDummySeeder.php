@@ -18,6 +18,7 @@ class TransaksiDummySeeder extends Seeder
         $kategori = DB::table('kategori')->pluck('id', 'nama');
         $daftarRt = DB::table('rt')->get();
         $acaraId = (int) DB::table('acara')->orderByDesc('id')->value('id');
+        $anggaranAcara = DB::table('anggaran_acara')->where('acara_id', $acaraId)->pluck('id', 'uraian');
         $tarifIuran = (int) DB::table('pengaturan')->where('kunci', 'iuran_kematian_per_kk')->value('nilai');
 
         $baris = [];
@@ -162,6 +163,7 @@ class TransaksiDummySeeder extends Seeder
             'pos_dana_id' => $pos['sedekah_bumi'],
             'kategori_id' => $kategori['Konsumsi Sedekah Bumi'],
             'acara_id' => $acaraId,
+            'anggaran_acara_id' => $anggaranAcara['Konsumsi'] ?? null,
             'jenis' => 'keluar',
             'tanggal' => Carbon::today()->subDays(7)->toDateString(),
             'nominal' => 4500000,
@@ -172,6 +174,7 @@ class TransaksiDummySeeder extends Seeder
             'pos_dana_id' => $pos['sedekah_bumi'],
             'kategori_id' => $kategori['Sewa dan Hiburan'],
             'acara_id' => $acaraId,
+            'anggaran_acara_id' => $anggaranAcara['Sewa tenda dan pengeras suara'] ?? null,
             'jenis' => 'keluar',
             'tanggal' => Carbon::today()->subDays(5)->toDateString(),
             'nominal' => 2500000,
@@ -223,6 +226,7 @@ class TransaksiDummySeeder extends Seeder
             'kategori_id' => null,
             'rt_id' => null,
             'acara_id' => null,
+            'anggaran_acara_id' => null,
             'dibuat_oleh' => $this->bendaharaId,
             'jenis' => 'masuk',
             'tanggal' => null,

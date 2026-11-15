@@ -15,41 +15,66 @@
     <div id="flash-data" data-password-sementara="{{ session('password_sementara') }}"
         data-username="{{ session('username_diatur_ulang') }}" data-akun-baru="{{ session('akun_baru') }}"
         data-galat="{{ session('galat') }}" data-sukses="{{ session('sukses') }}"
-        data-has-error="{{ $errors->any() ? '1' : '0' }}" style="display: none;">
+        data-has-error="{{ $errors->hasAny(['name', 'username', 'email', 'role', 'password']) ? '1' : '0' }}" style="display: none;">
     </div>
 
     <div class="row g-3">
         <div class="col-lg-7">
-            <form class="card h-100" data-demo-form data-demo-message="Pengaturan disimpan (contoh)."
-                onsubmit="return false">
+            <form class="card h-100" method="POST" action="{{ route('pengaturan.simpan') }}">
+                @csrf
                 <div class="card-body d-flex flex-column gap-3">
                     <h2 class="section-title">Kop laporan</h2>
                     <div>
                         <label class="form-label-app" for="setNamaDesa">Nama desa</label>
-                        <input class="form-control" id="setNamaDesa" type="text" value="Desa Babatan">
+                        <input class="form-control @error('nama_desa') is-invalid @enderror" id="setNamaDesa"
+                            name="nama_desa" type="text" value="{{ old('nama_desa', $pengaturan['nama_desa'] ?? '') }}">
+                        @error('nama_desa')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div>
                         <label class="form-label-app" for="setKop1">Baris kop 1</label>
-                        <input class="form-control" id="setKop1" type="text" value="PEMERINTAH DESA BABATAN">
+                        <input class="form-control @error('kop_baris_1') is-invalid @enderror" id="setKop1"
+                            name="kop_baris_1" type="text" value="{{ old('kop_baris_1', $pengaturan['kop_baris_1'] ?? '') }}">
+                        @error('kop_baris_1')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div>
                         <label class="form-label-app" for="setKop2">Baris kop 2</label>
-                        <input class="form-control" id="setKop2" type="text" value="LAPORAN KEUANGAN KAS WARGA">
+                        <input class="form-control @error('kop_baris_2') is-invalid @enderror" id="setKop2"
+                            name="kop_baris_2" type="text" value="{{ old('kop_baris_2', $pengaturan['kop_baris_2'] ?? '') }}">
+                        @error('kop_baris_2')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div>
                         <label class="form-label-app" for="setAlamat">Alamat pada kop</label>
-                        <input class="form-control" id="setAlamat" type="text" value="Alamat desa diisi di sini">
+                        <input class="form-control @error('kop_alamat') is-invalid @enderror" id="setAlamat"
+                            name="kop_alamat" type="text" value="{{ old('kop_alamat', $pengaturan['kop_alamat'] ?? '') }}">
+                        @error('kop_alamat')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <h2 class="section-title border-top pt-3 mt-2">Penandatangan laporan</h2>
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <label class="form-label-app" for="setBendahara">Nama bendahara</label>
-                            <input class="form-control" id="setBendahara" type="text" value="Bendahara (contoh)">
+                            <input class="form-control @error('nama_bendahara') is-invalid @enderror"
+                                id="setBendahara" name="nama_bendahara" type="text"
+                                value="{{ old('nama_bendahara', $pengaturan['nama_bendahara'] ?? '') }}">
+                            @error('nama_bendahara')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label-app" for="setKetua">Nama ketua</label>
-                            <input class="form-control" id="setKetua" type="text" value="Ketua (contoh)">
+                            <input class="form-control @error('nama_ketua') is-invalid @enderror" id="setKetua"
+                                name="nama_ketua" type="text" value="{{ old('nama_ketua', $pengaturan['nama_ketua'] ?? '') }}">
+                            @error('nama_ketua')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -57,16 +82,26 @@
                     <div class="row g-3">
                         <div class="col-sm-6">
                             <label class="form-label-app" for="setIuran">Iuran kematian per KK per minggu (Rp)</label>
-                            <input class="form-control" id="setIuran" type="text" value="5.000">
+                            <input class="form-control @error('iuran_kematian_per_kk') is-invalid @enderror"
+                                id="setIuran" name="iuran_kematian_per_kk" type="text" inputmode="numeric"
+                                value="{{ number_format((int) old('iuran_kematian_per_kk', $pengaturan['iuran_kematian_per_kk'] ?? 0), 0, ',', '.') }}"
+                                data-ribuan-set>
+                            @error('iuran_kematian_per_kk')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-sm-6">
                             <label class="form-label-app" for="setSantunan">Santunan kematian standar (Rp)</label>
-                            <input class="form-control" id="setSantunan" type="text" value="2.000.000">
+                            <input class="form-control @error('santunan_kematian_standar') is-invalid @enderror"
+                                id="setSantunan" name="santunan_kematian_standar" type="text" inputmode="numeric"
+                                value="{{ number_format((int) old('santunan_kematian_standar', $pengaturan['santunan_kematian_standar'] ?? 0), 0, ',', '.') }}"
+                                data-ribuan-set>
+                            @error('santunan_kematian_standar')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <p class="hint mb-0">Mengubah nominal standar tidak mengubah transaksi yang sudah tercatat.</p>
-
-                    <div class="notice notice-green" data-demo-feedback hidden></div>
 
                     <div>
                         <button class="btn btn-brand" type="submit">Simpan pengaturan</button>
@@ -301,6 +336,13 @@
             const akunBaru = flashData.dataset.akunBaru;
             const galat = flashData.dataset.galat;
             const suksesMsg = flashData.dataset.sukses;
+
+            document.querySelectorAll('[data-ribuan-set]').forEach(function(input) {
+                input.addEventListener('input', function() {
+                    const angka = String(this.value ?? '').replace(/\D/g, '');
+                    this.value = angka ? new Intl.NumberFormat('id-ID').format(parseInt(angka, 10)) : '';
+                });
+            });
 
             if (passSementara && username) {
                 Swal.fire({

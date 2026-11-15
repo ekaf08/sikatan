@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AcaraController;
 use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LaporanController;
@@ -74,7 +75,16 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         Route::delete('/{mutasi}', [MutasiDanaController::class, 'hapus'])->name('destroy');
     });
 
-    Route::view('/acara', 'pages.acara')->name('acara');
+    Route::get('/acara', [AcaraController::class, 'index'])->name('acara');
+
+    Route::prefix('acara')->name('acara.')->group(function () {
+        Route::post('/', [AcaraController::class, 'simpan'])->name('simpan');
+        Route::put('/{acara}', [AcaraController::class, 'ubah'])->name('update');
+        Route::delete('/{acara}', [AcaraController::class, 'hapus'])->name('destroy');
+        Route::post('/{acara}/anggaran', [AcaraController::class, 'anggaranSimpan'])->name('anggaran.simpan');
+        Route::put('/{acara}/anggaran/{anggaran}', [AcaraController::class, 'anggaranUbah'])->name('anggaran.update');
+        Route::delete('/{acara}/anggaran/{anggaran}', [AcaraController::class, 'anggaranHapus'])->name('anggaran.destroy');
+    });
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
 
@@ -127,6 +137,7 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
 // Khusus admin
 Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin'])->group(function () {
     Route::get('/pengaturan', [AkunController::class, 'index'])->name('pengaturan');
+    Route::post('/pengaturan', [AkunController::class, 'simpanPengaturan'])->name('pengaturan.simpan');
 
     // Group khusus untuk manajemen akun
     Route::prefix('pengaturan/akun')->name('akun.')->group(function () {

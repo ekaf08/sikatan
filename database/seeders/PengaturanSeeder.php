@@ -12,13 +12,14 @@ class PengaturanSeeder extends Seeder
         $sekarang = now();
 
         $pengaturan = [
-            'nama_desa'              => 'Desa Babatan',
-            'kop_baris_1'            => 'PEMERINTAH DESA BABATAN',
-            'kop_baris_2'            => 'LAPORAN KEUANGAN KAS WARGA',
-            'kop_alamat'             => 'Alamat desa diisi di sini',
-            'nama_bendahara'         => 'Bendahara (dummy)',
-            'nama_ketua'             => 'Ketua (dummy)',
-            'iuran_kematian_per_kk'  => '5000',
+            'nama_desa' => 'Desa Babatan',
+            'kop_baris_1' => 'PEMERINTAH DESA BABATAN',
+            'kop_baris_2' => 'LAPORAN KEUANGAN KAS WARGA',
+            'kop_alamat' => 'Alamat desa diisi di sini',
+            'nama_bendahara' => 'Bendahara (dummy)',
+            'nama_ketua' => 'Ketua (dummy)',
+            'iuran_kematian_per_kk' => '5000',
+            'santunan_kematian_standar' => '2000000',
         ];
 
         foreach ($pengaturan as $kunci => $nilai) {

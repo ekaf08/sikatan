@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Acara;
+use App\Models\AnggaranAcara;
 use App\Models\Kategori;
 use App\Models\Lampiran;
 use App\Models\PosDana;
@@ -20,9 +21,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PengeluaranController extends Controller
 {
-    public function __construct(private readonly KompresiGambar $kompresi)
-    {
-    }
+    public function __construct(private readonly KompresiGambar $kompresi) {}
 
     public function index(): View
     {
@@ -30,13 +29,14 @@ class PengeluaranController extends Controller
             'daftarPos' => PosDana::query()->orderBy('nama')->get(),
             'daftarKategori' => Kategori::query()->where('jenis', 'keluar')->orderBy('nama')->get(),
             'daftarAcara' => Acara::query()->orderByDesc('tahun')->get(),
+            'daftarAnggaran' => AnggaranAcara::query()->with('acara')->orderBy('acara_id')->orderBy('uraian')->get(),
         ], $this->statistikData()));
     }
 
     public function data(): JsonResponse
     {
         $query = Transaksi::query()
-            ->with(['posDana', 'kategori', 'acara', 'lampiran'])
+            ->with(['posDana', 'kategori', 'acara', 'anggaranAcara', 'lampiran'])
             ->where('jenis', 'keluar')
             ->orderByDesc('tanggal')
             ->orderByDesc('id');
@@ -49,7 +49,20 @@ class PengeluaranController extends Controller
             ->addColumn('pos_nama', fn (Transaksi $transaksi): string => $transaksi->posDana?->nama ?? '-')
             ->addColumn('kategori_nama', fn (Transaksi $transaksi): string => $transaksi->kategori?->nama ?? '-')
             ->addColumn('penerima', fn (Transaksi $transaksi): ?string => $transaksi->penerima)
-            ->addColumn('acara_nama', fn (Transaksi $transaksi): string => $transaksi->acara?->nama ?? '-')
+            ->addColumn('acara_nama', function (Transaksi $transaksi): string {
+                $acara = $transaksi->acara?->nama;
+                $item = $transaksi->anggaranAcara?->uraian;
+
+                if (! $acara && ! $item) {
+                    return '-';
+                }
+
+                if ($acara && $item) {
+                    return $acara.' · '.$item;
+                }
+
+                return $acara ?? $item;
+            })
             ->addColumn('nominal_format', fn (Transaksi $transaksi): string => number_format((float) $transaksi->nominal, 0, ',', '.'))
             ->addColumn('foto', function (Transaksi $transaksi): string {
                 if ($transaksi->lampiran->isEmpty()) {
@@ -59,13 +72,13 @@ class PengeluaranController extends Controller
                 $html = '<div class="d-flex flex-wrap gap-1">';
 
                 foreach ($transaksi->lampiran as $item) {
-                    $url = e(asset('storage/' . $item->lokasi_berkas));
-                    $html .= '<a href="' . $url . '" target="_blank" rel="noopener">'
-                        . '<img src="' . $url . '" alt="nota" style="width:38px;height:38px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
-                        . '</a>';
+                    $url = e(asset('storage/'.$item->lokasi_berkas));
+                    $html .= '<a href="'.$url.'" target="_blank" rel="noopener">'
+                        .'<img src="'.$url.'" alt="nota" style="width:38px;height:38px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
+                        .'</a>';
                 }
 
-                return $html . '</div>';
+                return $html.'</div>';
             })
             ->addColumn('status_label', fn (Transaksi $transaksi): string => $transaksi->status === 'batal' ? 'Batal' : 'Aktif')
             ->addColumn('aksi', function (Transaksi $transaksi): string {
@@ -76,30 +89,31 @@ class PengeluaranController extends Controller
 
                 $lampiran = $transaksi->lampiran->map(fn (Lampiran $item): array => [
                     'id' => $item->id,
-                    'url' => asset('storage/' . $item->lokasi_berkas),
+                    'url' => asset('storage/'.$item->lokasi_berkas),
                     'nama' => basename($item->lokasi_berkas),
                 ])->values();
 
                 $lampiranJson = e($lampiran->toJson());
 
                 return '<button type="button" class="btn btn-sm btn-outline-secondary btn-edit-keluar"'
-                    . ' data-id="' . $transaksi->id . '"'
-                    . ' data-tanggal="' . ($transaksi->tanggal?->format('Y-m-d') ?? '') . '"'
-                    . ' data-pos="' . $transaksi->pos_dana_id . '"'
-                    . ' data-kategori="' . $transaksi->kategori_id . '"'
-                    . ' data-acara="' . ($transaksi->acara_id ?? '') . '"'
-                    . ' data-nominal="' . e((int) $transaksi->nominal) . '"'
-                    . ' data-alasan="' . $alasanSelisih . '"'
-                    . ' data-penerima="' . $penerima . '"'
-                    . ' data-catatan-publik="' . $catatanPublik . '"'
-                    . ' data-catatan-internal="' . $catatanInternal . '"'
-                    . ' data-sembunyikan="' . ($transaksi->sembunyikan_lampiran ? '1' : '0') . '"'
-                    . ' data-lampiran="' . $lampiranJson . '" title="Ubah">'
-                    . '<i class="bi bi-pencil"></i></button>'
-                    . '<button type="button" class="btn btn-sm btn-outline-danger btn-hapus-keluar ms-1"'
-                    . ' data-id="' . $transaksi->id . '"'
-                    . ' data-info="' . e(($transaksi->kategori?->nama ?? 'Pengeluaran') . ' Rp' . number_format((float) $transaksi->nominal, 0, ',', '.')) . '" title="Hapus">'
-                    . '<i class="bi bi-trash"></i></button>';
+                    .' data-id="'.$transaksi->id.'"'
+                    .' data-tanggal="'.($transaksi->tanggal?->format('Y-m-d') ?? '').'"'
+                    .' data-pos="'.$transaksi->pos_dana_id.'"'
+                    .' data-kategori="'.$transaksi->kategori_id.'"'
+                    .' data-acara="'.($transaksi->acara_id ?? '').'"'
+                    .' data-anggaran="'.($transaksi->anggaran_acara_id ?? '').'"'
+                    .' data-nominal="'.e((int) $transaksi->nominal).'"'
+                    .' data-alasan="'.$alasanSelisih.'"'
+                    .' data-penerima="'.$penerima.'"'
+                    .' data-catatan-publik="'.$catatanPublik.'"'
+                    .' data-catatan-internal="'.$catatanInternal.'"'
+                    .' data-sembunyikan="'.($transaksi->sembunyikan_lampiran ? '1' : '0').'"'
+                    .' data-lampiran="'.$lampiranJson.'" title="Ubah">'
+                    .'<i class="bi bi-pencil"></i></button>'
+                    .'<button type="button" class="btn btn-sm btn-outline-danger btn-hapus-keluar ms-1"'
+                    .' data-id="'.$transaksi->id.'"'
+                    .' data-info="'.e(($transaksi->kategori?->nama ?? 'Pengeluaran').' Rp'.number_format((float) $transaksi->nominal, 0, ',', '.')).'" title="Hapus">'
+                    .'<i class="bi bi-trash"></i></button>';
             })
             ->rawColumns(['foto', 'aksi'])
             ->toJson();
@@ -113,6 +127,7 @@ class PengeluaranController extends Controller
             'pos_dana_id' => $data['pos_dana_id'],
             'kategori_id' => $data['kategori_id'],
             'acara_id' => $data['acara_id'] ?? null,
+            'anggaran_acara_id' => $data['anggaran_acara_id'] ?? null,
             'dibuat_oleh' => $request->user()->id,
             'jenis' => 'keluar',
             'tanggal' => $data['tanggal'],
@@ -128,7 +143,7 @@ class PengeluaranController extends Controller
         $this->simpanLampiran($request, $transaksi);
 
         return response()->json([
-            'message' => 'Pengeluaran sebesar Rp' . number_format((float) $transaksi->nominal, 0, ',', '.') . ' berhasil dicatat.',
+            'message' => 'Pengeluaran sebesar Rp'.number_format((float) $transaksi->nominal, 0, ',', '.').' berhasil dicatat.',
         ]);
     }
 
@@ -144,6 +159,7 @@ class PengeluaranController extends Controller
             'pos_dana_id' => $data['pos_dana_id'],
             'kategori_id' => $data['kategori_id'],
             'acara_id' => $data['acara_id'] ?? null,
+            'anggaran_acara_id' => $data['anggaran_acara_id'] ?? null,
             'tanggal' => $data['tanggal'],
             'nominal' => $data['nominal'],
             'alasan_selisih' => $data['alasan_selisih'] ?? null,
@@ -179,7 +195,7 @@ class PengeluaranController extends Controller
         }
 
         return response()->json([
-            'message' => 'Pengeluaran sebesar Rp' . number_format($nominal, 0, ',', '.') . ' berhasil dibatalkan.',
+            'message' => 'Pengeluaran sebesar Rp'.number_format($nominal, 0, ',', '.').' berhasil dibatalkan.',
         ]);
     }
 
@@ -236,6 +252,7 @@ class PengeluaranController extends Controller
             'pos_dana_id' => ['required', Rule::exists('pos_dana', 'id')],
             'kategori_id' => ['required', Rule::exists('kategori', 'id')->where('jenis', 'keluar')],
             'acara_id' => ['nullable', Rule::exists('acara', 'id')],
+            'anggaran_acara_id' => ['nullable', Rule::exists('anggaran_acara', 'id')->whereNull('deleted_at')],
             'nominal' => ['required', 'numeric', 'min:1'],
             'alasan_selisih' => ['nullable', 'string', 'max:1000'],
             'catatan_publik' => ['nullable', 'string', 'max:1000'],
@@ -249,6 +266,18 @@ class PengeluaranController extends Controller
         ], $this->pesanValidasi());
 
         $validator->after(function ($validator) use ($request) {
+            $anggaranId = $request->input('anggaran_acara_id');
+
+            if ($anggaranId) {
+                $anggaran = AnggaranAcara::query()->find($anggaranId);
+
+                if (! $request->input('acara_id')) {
+                    $validator->errors()->add('acara_id', 'Pilih acara terlebih dahulu sebelum memilih item anggaran.');
+                } elseif ($anggaran && (int) $anggaran->acara_id !== (int) $request->input('acara_id')) {
+                    $validator->errors()->add('anggaran_acara_id', 'Item anggaran tidak sesuai dengan acara yang dipilih.');
+                }
+            }
+
             $kategori = Kategori::find($request->input('kategori_id'));
             $standar = $kategori?->nominal_standar;
 
@@ -261,7 +290,7 @@ class PengeluaranController extends Controller
             if (round($nominal, 2) !== round((float) $standar, 2) && ! $request->filled('alasan_selisih')) {
                 $validator->errors()->add(
                     'alasan_selisih',
-                    'Alasan wajib diisi karena nominal berbeda dari standar Rp' . number_format((float) $standar, 0, ',', '.') . '.'
+                    'Alasan wajib diisi karena nominal berbeda dari standar Rp'.number_format((float) $standar, 0, ',', '.').'.'
                 );
             }
         });
@@ -307,6 +336,7 @@ class PengeluaranController extends Controller
             'kategori_id.required' => 'Kategori wajib dipilih.',
             'kategori_id.exists' => 'Kategori tidak valid atau bukan kategori pengeluaran.',
             'acara_id.exists' => 'Acara tidak valid.',
+            'anggaran_acara_id.exists' => 'Item anggaran acara tidak valid.',
             'nominal.required' => 'Nominal wajib diisi.',
             'nominal.numeric' => 'Nominal harus berupa angka.',
             'nominal.min' => 'Nominal harus lebih besar dari nol.',

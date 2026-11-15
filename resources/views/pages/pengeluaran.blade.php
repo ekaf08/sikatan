@@ -132,6 +132,19 @@
                                 <div class="invalid-feedback" data-error="acara_id"></div>
                             </div>
                             <div class="col-12 col-md-6">
+                                <label class="form-label-app" for="keluarAnggaran">Item anggaran acara (opsional)</label>
+                                <select class="form-select" id="keluarAnggaran" name="anggaran_acara_id" disabled>
+                                    <option value="">Pilih acara terlebih dahulu</option>
+                                    @foreach ($daftarAnggaran as $anggaran)
+                                        <option value="{{ $anggaran->id }}" data-acara="{{ $anggaran->acara_id }}">
+                                            {{ $anggaran->acara?->nama ?? 'Acara' }} - {{ $anggaran->uraian }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span class="hint" id="keluarAnggaranHint">Pilih acara agar item anggaran bisa dipilih.</span>
+                                <div class="invalid-feedback" data-error="anggaran_acara_id"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="keluarNominal">Nominal (Rp)</label>
                                 <input class="form-control" id="keluarNominal" name="nominal" type="text"
                                     inputmode="numeric" placeholder="Contoh: 3.500.000" data-ribuan required>
@@ -218,6 +231,36 @@
 
             const modalKeluar = new bootstrap.Modal(document.getElementById('modalKeluar'));
             const formKeluar = document.getElementById('formKeluar');
+            const keluarAcara = document.getElementById('keluarAcara');
+            const keluarAnggaran = document.getElementById('keluarAnggaran');
+
+            function perbaruiOpsiAnggaran() {
+                const acaraId = keluarAcara.value;
+                let masihValid = false;
+
+                keluarAnggaran.querySelectorAll('option[data-acara]').forEach(function(option) {
+                    const cocok = acaraId !== '' && option.getAttribute('data-acara') === acaraId;
+                    option.hidden = !cocok;
+                    option.disabled = !cocok;
+                    if (cocok && option.selected) {
+                        masihValid = true;
+                    }
+                });
+
+                keluarAnggaran.disabled = acaraId === '';
+
+                if (acaraId === '') {
+                    keluarAnggaran.value = '';
+                } else if (!masihValid) {
+                    keluarAnggaran.value = '';
+                }
+
+                document.getElementById('keluarAnggaranHint').textContent = acaraId === '' ?
+                    'Pilih acara agar item anggaran bisa dipilih.' :
+                    'Kosongkan bila pengeluaran tidak spesifik ke satu item.';
+            }
+
+            keluarAcara.addEventListener('change', perbaruiOpsiAnggaran);
 
             function escapeHtml(value) {
                 return String(value ?? '').replace(/[&<>"']/g, function(character) {
@@ -619,6 +662,7 @@
                 formKeluar.reset();
                 bersihkanValidasi(formKeluar);
                 resetLampiran();
+                perbaruiOpsiAnggaran();
                 perbaruiHintStandar();
                 document.getElementById('modalKeluarLabel').textContent = 'Tambah pengeluaran';
                 modalKeluar.show();
@@ -632,7 +676,9 @@
                 document.getElementById('keluarTanggal').value = this.getAttribute('data-tanggal');
                 document.getElementById('keluarPos').value = this.getAttribute('data-pos');
                 document.getElementById('keluarKategori').value = this.getAttribute('data-kategori');
-                document.getElementById('keluarAcara').value = this.getAttribute('data-acara');
+                keluarAcara.value = this.getAttribute('data-acara');
+                perbaruiOpsiAnggaran();
+                keluarAnggaran.value = this.getAttribute('data-anggaran') || '';
                 document.getElementById('keluarNominal').value = formatRibuan(this.getAttribute(
                     'data-nominal'));
                 document.getElementById('keluarAlasan').value = this.getAttribute('data-alasan');
@@ -664,7 +710,8 @@
                 data.append('tanggal', document.getElementById('keluarTanggal').value);
                 data.append('pos_dana_id', document.getElementById('keluarPos').value);
                 data.append('kategori_id', document.getElementById('keluarKategori').value);
-                data.append('acara_id', document.getElementById('keluarAcara').value);
+                data.append('acara_id', keluarAcara.value);
+                data.append('anggaran_acara_id', keluarAnggaran.value);
                 data.append('nominal', angkaMentah(document.getElementById('keluarNominal').value));
                 data.append('alasan_selisih', document.getElementById('keluarAlasan').value.trim());
                 data.append('penerima', document.getElementById('keluarPenerima').value.trim());

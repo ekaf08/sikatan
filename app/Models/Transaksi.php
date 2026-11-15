@@ -18,6 +18,7 @@ class Transaksi extends Model
         'kategori_id',
         'rt_id',
         'acara_id',
+        'anggaran_acara_id',
         'dibuat_oleh',
         'jenis',
         'tanggal',
@@ -64,6 +65,11 @@ class Transaksi extends Model
     public function acara(): BelongsTo
     {
         return $this->belongsTo(Acara::class, 'acara_id')->withTrashed();
+    }
+
+    public function anggaranAcara(): BelongsTo
+    {
+        return $this->belongsTo(AnggaranAcara::class, 'anggaran_acara_id')->withTrashed();
     }
 
     public function dibuatOleh(): BelongsTo

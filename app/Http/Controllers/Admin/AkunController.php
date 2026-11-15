@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kategori;
+use App\Models\Pengaturan;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -16,9 +19,61 @@ class AkunController extends Controller
 {
     public function index(): View
     {
+        $pengaturan = Pengaturan::query()->pluck('nilai', 'kunci')->all();
+        $pengaturan['santunan_kematian_standar'] = $pengaturan['santunan_kematian_standar']
+            ?? Kategori::query()->where('nama', 'Santunan Kematian')->value('nominal_standar')
+            ?? 2000000;
+
         return view('pages.pengaturan', [
             'akun' => User::orderBy('name')->get(),
+            'pengaturan' => $pengaturan,
         ]);
+    }
+
+    public function simpanPengaturan(Request $request): RedirectResponse
+    {
+        $request->merge([
+            'iuran_kematian_per_kk' => $this->angka($request->input('iuran_kematian_per_kk')),
+            'santunan_kematian_standar' => $this->angka($request->input('santunan_kematian_standar')),
+        ]);
+
+        $data = $request->validate([
+            'nama_desa' => ['required', 'string', 'max:255'],
+            'kop_baris_1' => ['required', 'string', 'max:255'],
+            'kop_baris_2' => ['required', 'string', 'max:255'],
+            'kop_alamat' => ['required', 'string', 'max:500'],
+            'nama_bendahara' => ['required', 'string', 'max:255'],
+            'nama_ketua' => ['required', 'string', 'max:255'],
+            'iuran_kematian_per_kk' => ['required', 'integer', 'min:1'],
+            'santunan_kematian_standar' => ['required', 'integer', 'min:1'],
+        ], [
+            'nama_desa.required' => 'Nama desa wajib diisi.',
+            'kop_baris_1.required' => 'Baris kop 1 wajib diisi.',
+            'kop_baris_2.required' => 'Baris kop 2 wajib diisi.',
+            'kop_alamat.required' => 'Alamat pada kop wajib diisi.',
+            'nama_bendahara.required' => 'Nama bendahara wajib diisi.',
+            'nama_ketua.required' => 'Nama ketua wajib diisi.',
+            'iuran_kematian_per_kk.required' => 'Iuran kematian wajib diisi.',
+            'iuran_kematian_per_kk.min' => 'Iuran kematian harus lebih dari nol.',
+            'santunan_kematian_standar.required' => 'Santunan kematian wajib diisi.',
+            'santunan_kematian_standar.min' => 'Santunan kematian harus lebih dari nol.',
+        ]);
+
+        DB::transaction(function () use ($data) {
+            foreach ($data as $kunci => $nilai) {
+                Pengaturan::query()->updateOrCreate(
+                    ['kunci' => $kunci],
+                    ['nilai' => (string) $nilai]
+                );
+            }
+
+            Kategori::query()->where('nama', 'Iuran Kematian')
+                ->update(['nominal_standar' => $data['iuran_kematian_per_kk']]);
+            Kategori::query()->where('nama', 'Santunan Kematian')
+                ->update(['nominal_standar' => $data['santunan_kematian_standar']]);
+        });
+
+        return back()->with('sukses', 'Pengaturan berhasil disimpan.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -45,7 +100,7 @@ class AkunController extends Controller
             'password.min' => 'Kata sandi awal minimal 8 karakter.',
         ]);
 
-        $user = new User();
+        $user = new User;
         $user->name = $data['name'];
         $user->username = $data['username'];
         $user->email = $data['email'];
@@ -105,7 +160,7 @@ class AkunController extends Controller
         $user->role = $data['role'];
 
         // Update password hanya jika form password diisi
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);
             $user->harus_ganti_password = true; // Opsional: paksa ganti sandi jika direset admin
         }
@@ -125,5 +180,10 @@ class AkunController extends Controller
         $user->delete();
 
         return back()->with('sukses', 'Akun berhasil dihapus.');
+    }
+
+    private function angka(mixed $nilai): int
+    {
+        return (int) preg_replace('/\D/', '', (string) $nilai);
     }
 }
