@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\PemasukanController;
 use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\PosDanaController;
+use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
 use App\Http\Controllers\AuthController;
@@ -56,7 +57,10 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         Route::put('/{pengeluaran}', [PengeluaranController::class, 'ubah'])->name('update');
         Route::delete('/{pengeluaran}', [PengeluaranController::class, 'hapus'])->name('destroy');
     });
-    Route::view('/transaksi', 'pages.transaksi')->name('transaksi');
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
+
+    Route::get('/transaksi/data', [TransaksiController::class, 'data'])->name('transaksi.data');
+
     Route::view('/mutasi-dana', 'pages.mutasi-dana')->name('mutasi-dana');
     Route::view('/acara', 'pages.acara')->name('acara');
     Route::view('/laporan', 'pages.laporan')->name('laporan');

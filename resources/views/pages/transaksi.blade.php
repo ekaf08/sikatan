@@ -1,216 +1,150 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Transaksi — Kas Desa Babatan')
+@section('title', 'Daftar Transaksi - Kas Desa Babatan')
 
 @section('topbarTitle', 'Daftar transaksi')
 @section('topbarSubtitle', 'Semua catatan kas')
 
 @section('content')
-<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div>
-          <h1 class="page-title">Daftar transaksi</h1>
-          <p class="page-subtitle">Semua pemasukan dan pengeluaran. Transaksi tidak bisa dihapus, hanya dibatalkan dengan alasan.</p>
-        </div>
-        <div class="d-flex flex-wrap gap-2">
-          <a class="btn btn-outline-brand" href="{{ route('publik') }}"><i class="bi bi-download"></i>Ekspor</a>
-          <a class="btn btn-brand" href="{{ route('pemasukan') }}"><i class="bi bi-plus-lg"></i>Tambah transaksi</a>
-        </div>
-      </div>
+    <div class="mb-4">
+        <h1 class="page-title">Daftar transaksi</h1>
+        <p class="page-subtitle">Rekapan seluruh pemasukan dan pengeluaran kas desa.</p>
+    </div>
 
-      <div class="card mb-4">
+    <div class="card">
         <div class="card-body">
-          <div class="row g-3 align-items-end">
-            <div class="col-6 col-md-4 col-xl-2">
-              <label class="form-label-app" for="filterJenis">Jenis</label>
-              <select class="form-select" id="filterJenis">
-                <option>Semua</option>
-                <option>Masuk</option>
-                <option>Keluar</option>
-              </select>
+            <h2 class="section-title mb-3">Riwayat transaksi</h2>
+
+            <div class="table-responsive">
+                <table class="table-app w-100 align-middle" id="tabelTransaksi">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No</th>
+                            <th>Tanggal</th>
+                            <th>Jenis</th>
+                            <th>Pos dana</th>
+                            <th>Kategori</th>
+                            <th>Keterangan</th>
+                            <th class="text-end">Nominal</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-            <div class="col-6 col-md-4 col-xl-2">
-              <label class="form-label-app" for="filterPos">Pos dana</label>
-              <select class="form-select" id="filterPos">
-                <option>Semua pos</option>
-                <option>Kas Kematian</option>
-                <option>Kas Masjid</option>
-                <option>Kas Sedekah Bumi</option>
-                <option>Kas Lain-lain</option>
-              </select>
-            </div>
-            <div class="col-6 col-md-4 col-xl-2">
-              <label class="form-label-app" for="filterStatus">Status</label>
-              <select class="form-select" id="filterStatus">
-                <option>Semua</option>
-                <option>Aktif</option>
-                <option>Batal</option>
-              </select>
-            </div>
-            <div class="col-6 col-md-3 col-xl-2">
-              <label class="form-label-app" for="filterDari">Dari</label>
-              <input class="form-control" id="filterDari" type="date" value="2026-11-01">
-            </div>
-            <div class="col-6 col-md-3 col-xl-2">
-              <label class="form-label-app" for="filterSampai">Sampai</label>
-              <input class="form-control" id="filterSampai" type="date" value="2026-11-12">
-            </div>
-            <div class="col-12 col-md-6 col-xl-2 d-flex gap-2">
-              <button class="btn btn-brand flex-fill" type="button">Terapkan</button>
-              <button class="btn btn-outline-brand" type="button" aria-label="Reset filter"><i class="bi bi-arrow-counterclockwise"></i></button>
-            </div>
-          </div>
+
+            <p class="hint mt-3">Rekapan otomatis dari menu pemasukan dan pengeluaran. Data yang dibatalkan tetap tampil sebagai arsip.</p>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-            <h2 class="section-title">Riwayat transaksi</h2>
-            <span class="hint">Menampilkan 8 dari 248 transaksi</span>
-          </div>
-
-          <div class="table-responsive">
-            <table class="table-app">
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Jenis</th>
-                  <th>Pos dana</th>
-                  <th>Keterangan</th>
-                  <th class="num">Nominal</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>09 Nov</td>
-                  <td><span class="badge-soft badge-out">Keluar</span></td>
-                  <td>Kas Lain-lain</td>
-                  <td>Pembelian alat kebersihan</td>
-                  <td class="num">Rp125.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="is-cancelled">
-                  <td>08 Nov</td>
-                  <td><span class="badge-soft badge-out">Keluar</span></td>
-                  <td>Kas Lain-lain</td>
-                  <td>
-                    Pembelian alat kebersihan
-                    <br><span class="hint">Dibatalkan: salah input nominal, dicatat ulang</span>
-                  </td>
-                  <td class="num amount">Rp250.000</td>
-                  <td><span class="badge-soft badge-neutral">Batal</span></td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="is-highlight">
-                  <td>08 Nov</td>
-                  <td><span class="badge-soft badge-in">Masuk</span></td>
-                  <td>Kas Kematian</td>
-                  <td>Setoran iuran kematian, RW 01 RT 03</td>
-                  <td class="num">Rp165.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>08 Nov</td>
-                  <td><span class="badge-soft badge-in">Masuk</span></td>
-                  <td>Kas Kematian</td>
-                  <td>Setoran iuran kematian, RW 02 RT 01</td>
-                  <td class="num">Rp185.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>06 Nov</td>
-                  <td><span class="badge-soft badge-out">Keluar</span></td>
-                  <td>Kas Sedekah Bumi</td>
-                  <td>Uang muka konsumsi sedekah bumi</td>
-                  <td class="num">Rp4.500.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>06 Nov</td>
-                  <td><span class="badge-soft badge-in">Masuk</span></td>
-                  <td>Kas Masjid</td>
-                  <td>Uang kotak Jumat</td>
-                  <td class="num">Rp850.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>05 Nov</td>
-                  <td><span class="badge-soft badge-out">Keluar</span></td>
-                  <td>Kas Sedekah Bumi</td>
-                  <td>Uang muka sewa tenda dan pengeras suara</td>
-                  <td class="num">Rp2.500.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>30 Okt</td>
-                  <td><span class="badge-soft badge-out">Keluar</span></td>
-                  <td>Kas Masjid</td>
-                  <td>Ganti kran tempat wudu yang rusak</td>
-                  <td class="num">Rp350.000</td>
-                  <td>Aktif</td>
-                  <td>
-                    <div class="actions">
-                      <a class="btn-ghost" href="#">Lihat</a>
-                      <a class="btn-ghost is-danger" href="#">Batalkan</a>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <nav class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3" aria-label="Navigasi halaman">
-            <span class="hint">Halaman 1 dari 31</span>
-            <ul class="pagination mb-0">
-              <li class="page-item disabled"><a class="page-link" href="#" aria-label="Sebelumnya"><i class="bi bi-chevron-left"></i></a></li>
-              <li class="page-item active"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#" aria-label="Berikutnya"><i class="bi bi-chevron-right"></i></a></li>
-            </ul>
-          </nav>
-        </div>
-      </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.jQuery === 'undefined' || !window.jQuery.fn.DataTable) {
+                return;
+            }
+
+            const $ = window.jQuery;
+
+            function escapeHtml(value) {
+                return String(value ?? '').replace(/[&<>"']/g, function(character) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    } [character];
+                });
+            }
+
+            const bahasaDataTables = {
+                search: 'Cari:',
+                lengthMenu: 'Tampil _MENU_ data',
+                info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                infoEmpty: 'Tidak ada data',
+                infoFiltered: '(difilter dari _MAX_ total data)',
+                zeroRecords: 'Data tidak ditemukan',
+                processing: 'Memuat...',
+                paginate: {
+                    first: 'Awal',
+                    last: 'Akhir',
+                    next: 'Lanjut',
+                    previous: 'Kembali'
+                }
+            };
+
+            const domDataTables = "<'row align-items-center mb-3'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-end'f>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row align-items-center mt-3'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>";
+
+            $('#tabelTransaksi').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('transaksi.data') }}",
+                    type: 'GET'
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'tanggal_format',
+                        name: 'tanggal'
+                    },
+                    {
+                        data: 'jenis_label',
+                        name: 'jenis_label',
+                        orderable: false
+                    },
+                    {
+                        data: 'pos_nama',
+                        name: 'pos_nama',
+                        orderable: false
+                    },
+                    {
+                        data: 'kategori_nama',
+                        name: 'kategori_nama',
+                        orderable: false,
+                        render: function(data) {
+                            return '<strong>' + escapeHtml(data) + '</strong>';
+                        }
+                    },
+                    {
+                        data: 'keterangan',
+                        name: 'keterangan',
+                        orderable: false
+                    },
+                    {
+                        data: 'nominal_format',
+                        name: 'nominal',
+                        className: 'text-end',
+                        searchable: false
+                    },
+                    {
+                        data: 'status_label',
+                        name: 'status_nilai',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                createdRow: function(row, data) {
+                    if (data.status_nilai === 'batal') {
+                        row.classList.add('is-cancelled');
+                    }
+                },
+                order: [
+                    [1, 'desc']
+                ],
+                pageLength: 10,
+                language: bahasaDataTables,
+                dom: domDataTables
+            });
+        });
+    </script>
+@endpush
