@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AkunController;
 use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\MutasiDanaController;
 use App\Http\Controllers\Admin\PemasukanController;
 use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\PosDanaController;
@@ -61,9 +63,27 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
 
     Route::get('/transaksi/data', [TransaksiController::class, 'data'])->name('transaksi.data');
 
-    Route::view('/mutasi-dana', 'pages.mutasi-dana')->name('mutasi-dana');
+    Route::get('/mutasi-dana', [MutasiDanaController::class, 'index'])->name('mutasi-dana');
+
+    Route::prefix('mutasi-dana')->name('mutasi-dana.')->group(function () {
+        Route::get('/data', [MutasiDanaController::class, 'data'])->name('data');
+        Route::get('/saldo', [MutasiDanaController::class, 'saldo'])->name('saldo');
+        Route::get('/statistik', [MutasiDanaController::class, 'statistik'])->name('statistik');
+        Route::post('/', [MutasiDanaController::class, 'simpan'])->name('simpan');
+        Route::put('/{mutasi}', [MutasiDanaController::class, 'ubah'])->name('update');
+        Route::delete('/{mutasi}', [MutasiDanaController::class, 'hapus'])->name('destroy');
+    });
+
     Route::view('/acara', 'pages.acara')->name('acara');
-    Route::view('/laporan', 'pages.laporan')->name('laporan');
+
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+
+    Route::prefix('laporan')->name('laporan.')->group(function () {
+        Route::get('/data', [LaporanController::class, 'data'])->name('data');
+        Route::get('/ekspor/pdf', [LaporanController::class, 'eksporPdf'])->name('pdf');
+        Route::get('/ekspor/excel', [LaporanController::class, 'eksporExcel'])->name('excel');
+    });
+
     Route::view('/log-audit', 'pages.log-audit')->name('log-audit');
 
     Route::get('/master/wilayah', [WilayahController::class, 'index'])->name('master-wilayah');
