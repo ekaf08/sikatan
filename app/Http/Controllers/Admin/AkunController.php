@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use App\Models\Pengaturan;
 use App\Models\User;
+use App\Services\PencatatAudit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,8 @@ use Illuminate\View\View;
 
 class AkunController extends Controller
 {
+    public function __construct(private readonly PencatatAudit $audit) {}
+
     public function index(): View
     {
         $pengaturan = Pengaturan::query()->pluck('nilai', 'kunci')->all();
@@ -59,6 +62,11 @@ class AkunController extends Controller
             'santunan_kematian_standar.min' => 'Santunan kematian harus lebih dari nol.',
         ]);
 
+        $lama = Pengaturan::query()
+            ->whereIn('kunci', array_keys($data))
+            ->pluck('nilai', 'kunci')
+            ->all();
+
         DB::transaction(function () use ($data) {
             foreach ($data as $kunci => $nilai) {
                 Pengaturan::query()->updateOrCreate(
@@ -72,6 +80,22 @@ class AkunController extends Controller
             Kategori::query()->where('nama', 'Santunan Kematian')
                 ->update(['nominal_standar' => $data['santunan_kematian_standar']]);
         });
+
+        $lamaBerubah = [];
+        $baruBerubah = [];
+
+        foreach ($data as $kunci => $nilai) {
+            $sebelum = $lama[$kunci] ?? null;
+
+            if ((string) $sebelum !== (string) $nilai) {
+                $lamaBerubah[$kunci] = $sebelum;
+                $baruBerubah[$kunci] = (string) $nilai;
+            }
+        }
+
+        if ($baruBerubah !== []) {
+            $this->audit->catat($request->user(), 'pengaturan', 0, 'ubah', $lamaBerubah, $baruBerubah);
+        }
 
         return back()->with('sukses', 'Pengaturan berhasil disimpan.');
     }
@@ -110,6 +134,8 @@ class AkunController extends Controller
         $user->harus_ganti_password = true;
         $user->save();
 
+        $this->audit->catat($request->user(), 'users', $user->id, 'tambah', null, $this->nilaiAudit($user));
+
         return back()->with('akun_baru', $user->name);
     }
 
@@ -126,6 +152,11 @@ class AkunController extends Controller
         $user->harus_ganti_password = true;
         $user->remember_token = Str::random(60);
         $user->save();
+
+        $this->audit->catat($request->user(), 'users', $user->id, 'ubah', null, [
+            'username' => $user->username,
+            'kata_sandi' => 'diatur ulang',
+        ]);
 
         return back()->with([
             'password_sementara' => $sementara,
@@ -154,6 +185,8 @@ class AkunController extends Controller
             'password.min' => 'Kata sandi minimal 8 karakter.',
         ]);
 
+        $sebelum = $this->nilaiAudit($user);
+
         $user->name = $data['name'];
         $user->username = $data['username'];
         $user->email = $data['email'];
@@ -167,19 +200,36 @@ class AkunController extends Controller
 
         $user->save();
 
+        $this->audit->catat($request->user(), 'users', $user->id, 'ubah', $sebelum, $this->nilaiAudit($user->fresh()));
+
         return back()->with('sukses', 'Data akun berhasil diperbarui.');
     }
 
-    public function destroy(User $user): RedirectResponse
+    public function destroy(Request $request, User $user): RedirectResponse
     {
         // Cegah admin menghapus akunnya sendiri
         if (auth()->id() === $user->id) {
             return back()->with('galat', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }
 
+        $sebelum = $this->nilaiAudit($user);
+
         $user->delete();
 
+        $this->audit->catat($request->user(), 'users', $user->id, 'batal', $sebelum);
+
         return back()->with('sukses', 'Akun berhasil dihapus.');
+    }
+
+    private function nilaiAudit(User $user): array
+    {
+        return [
+            'nama' => $user->name,
+            'username' => $user->username,
+            'email' => $user->email,
+            'peran' => $user->role,
+            'aktif' => $user->aktif,
+        ];
     }
 
     private function angka(mixed $nilai): int

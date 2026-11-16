@@ -7,6 +7,7 @@ use App\Models\Acara;
 use App\Models\AnggaranAcara;
 use App\Models\PosDana;
 use App\Models\Transaksi;
+use App\Services\PencatatAudit;
 use App\Services\SaldoDana;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,10 @@ use Illuminate\View\View;
 
 class AcaraController extends Controller
 {
-    public function __construct(private readonly SaldoDana $saldoDana) {}
+    public function __construct(
+        private readonly SaldoDana $saldoDana,
+        private readonly PencatatAudit $audit,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -50,19 +54,24 @@ class AcaraController extends Controller
 
         $acara = Acara::create($data);
 
+        $this->audit->catat($request->user(), 'acara', $acara->id, 'tambah', null, $this->nilaiAuditAcara($acara));
+
         return $this->kembali($acara, "Acara {$acara->nama} berhasil ditambahkan.");
     }
 
     public function ubah(Request $request, Acara $acara): RedirectResponse
     {
         $data = $this->validasiAcara($request);
+        $sebelum = $this->nilaiAuditAcara($acara);
 
         $acara->update($data);
+
+        $this->audit->catat($request->user(), 'acara', $acara->id, 'ubah', $sebelum, $this->nilaiAuditAcara($acara->fresh()));
 
         return $this->kembali($acara, "Acara {$acara->nama} berhasil diperbarui.");
     }
 
-    public function hapus(Acara $acara): RedirectResponse
+    public function hapus(Request $request, Acara $acara): RedirectResponse
     {
         $dipakai = Transaksi::query()->where('acara_id', $acara->id)->exists();
 
@@ -71,10 +80,14 @@ class AcaraController extends Controller
                 ->with('galat', "Acara {$acara->nama} tidak dapat dihapus karena sudah dipakai pada transaksi.");
         }
 
+        $sebelum = $this->nilaiAuditAcara($acara);
+
         DB::transaction(function () use ($acara) {
             $acara->anggaran()->delete();
             $acara->delete();
         });
+
+        $this->audit->catat($request->user(), 'acara', $acara->id, 'batal', $sebelum);
 
         return redirect()->route('acara')->with('sukses', "Acara {$acara->nama} berhasil dihapus.");
     }
@@ -83,7 +96,9 @@ class AcaraController extends Controller
     {
         $data = $this->validasiAnggaran($request);
 
-        $acara->anggaran()->create($data);
+        $anggaran = $acara->anggaran()->create($data);
+
+        $this->audit->catat($request->user(), 'anggaran_acara', $anggaran->id, 'tambah', null, $this->nilaiAuditAnggaran($anggaran));
 
         return $this->kembali($acara, 'Item anggaran berhasil ditambahkan.');
     }
@@ -93,13 +108,16 @@ class AcaraController extends Controller
         $this->pastikanMilikAcara($acara, $anggaran);
 
         $data = $this->validasiAnggaran($request);
+        $sebelum = $this->nilaiAuditAnggaran($anggaran);
 
         $anggaran->update($data);
+
+        $this->audit->catat($request->user(), 'anggaran_acara', $anggaran->id, 'ubah', $sebelum, $this->nilaiAuditAnggaran($anggaran->fresh()));
 
         return $this->kembali($acara, 'Item anggaran berhasil diperbarui.');
     }
 
-    public function anggaranHapus(Acara $acara, AnggaranAcara $anggaran): RedirectResponse
+    public function anggaranHapus(Request $request, Acara $acara, AnggaranAcara $anggaran): RedirectResponse
     {
         $this->pastikanMilikAcara($acara, $anggaran);
 
@@ -109,7 +127,11 @@ class AcaraController extends Controller
             return $this->kembali($acara, 'Item anggaran tidak dapat dihapus karena sudah dipakai pada transaksi.', 'galat');
         }
 
+        $sebelum = $this->nilaiAuditAnggaran($anggaran);
+
         $anggaran->delete();
+
+        $this->audit->catat($request->user(), 'anggaran_acara', $anggaran->id, 'batal', $sebelum);
 
         return $this->kembali($acara, 'Item anggaran berhasil dihapus.');
     }
@@ -246,6 +268,23 @@ class AcaraController extends Controller
             'nominal_anggaran.required' => 'Nominal anggaran wajib diisi.',
             'nominal_anggaran.min' => 'Nominal anggaran harus lebih dari nol.',
         ]);
+    }
+
+    private function nilaiAuditAcara(Acara $acara): array
+    {
+        return [
+            'nama' => $acara->nama,
+            'tahun' => $acara->tahun,
+            'status' => $acara->status,
+        ];
+    }
+
+    private function nilaiAuditAnggaran(AnggaranAcara $anggaran): array
+    {
+        return [
+            'uraian' => $anggaran->uraian,
+            'nominal_anggaran' => (float) $anggaran->nominal_anggaran,
+        ];
     }
 
     private function pastikanMilikAcara(Acara $acara, AnggaranAcara $anggaran): void

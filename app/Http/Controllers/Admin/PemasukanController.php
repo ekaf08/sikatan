@@ -10,6 +10,7 @@ use App\Models\PosDana;
 use App\Models\Rt;
 use App\Models\Transaksi;
 use App\Services\KompresiGambar;
+use App\Services\PencatatAudit;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,7 +36,10 @@ class PemasukanController extends Controller
         'lain' => 'Lain-lain',
     ];
 
-    public function __construct(private readonly KompresiGambar $kompresi) {}
+    public function __construct(
+        private readonly KompresiGambar $kompresi,
+        private readonly PencatatAudit $audit,
+    ) {}
 
     public function index(): View
     {
@@ -131,6 +135,8 @@ class PemasukanController extends Controller
 
         $this->simpanLampiran($request, $transaksi, $data['tipe']);
 
+        $this->audit->catat($request->user(), 'transaksi', $transaksi->id, 'tambah', null, $this->nilaiAudit($transaksi));
+
         return response()->json([
             'message' => 'Pemasukan sebesar Rp'.number_format((float) $transaksi->nominal, 0, ',', '.').' berhasil dicatat.',
         ]);
@@ -144,6 +150,7 @@ class PemasukanController extends Controller
 
         $data = $this->validasi($request);
         $meta = $this->resolveMeta($data);
+        $sebelum = $this->nilaiAudit($pemasukan);
 
         $pemasukan->update([
             'pos_dana_id' => $meta['pos']->id,
@@ -166,18 +173,22 @@ class PemasukanController extends Controller
             $this->simpanLampiran($request, $pemasukan, $data['tipe']);
         }
 
+        $pemasukan->refresh();
+        $this->audit->catat($request->user(), 'transaksi', $pemasukan->id, 'ubah', $sebelum, $this->nilaiAudit($pemasukan));
+
         return response()->json([
             'message' => 'Pemasukan berhasil diperbarui.',
         ]);
     }
 
-    public function hapus(Transaksi $pemasukan): JsonResponse
+    public function hapus(Request $request, Transaksi $pemasukan): JsonResponse
     {
         if ($pemasukan->jenis !== 'masuk') {
             return response()->json(['message' => 'Data bukan merupakan pemasukan.'], 422);
         }
 
         $nominal = (float) $pemasukan->nominal;
+        $sebelum = $this->nilaiAudit($pemasukan);
 
         try {
             $pemasukan->lampiran()->delete();
@@ -187,6 +198,8 @@ class PemasukanController extends Controller
                 'message' => 'Pemasukan tidak dapat dihapus karena masih terhubung dengan data lain.',
             ], 422);
         }
+
+        $this->audit->catat($request->user(), 'transaksi', $pemasukan->id, 'batal', $sebelum);
 
         return response()->json([
             'message' => 'Pemasukan sebesar Rp'.number_format($nominal, 0, ',', '.').' berhasil dibatalkan.',
@@ -204,6 +217,30 @@ class PemasukanController extends Controller
             'terakhir_kategori' => $data['terakhirKategori'],
             'terakhir_tanggal' => $data['terakhirTanggal'],
         ]);
+    }
+
+    private function nilaiAudit(Transaksi $transaksi): array
+    {
+        $transaksi->loadMissing(['posDana', 'kategori', 'rt.rw']);
+
+        return [
+            'tanggal' => $transaksi->tanggal?->format('Y-m-d'),
+            'jenis' => 'masuk',
+            'pos' => $transaksi->posDana?->nama,
+            'kategori' => $transaksi->kategori?->nama,
+            'rt' => $transaksi->rt
+                ? ($transaksi->rt->rw?->nama ?? 'RW ?').' RT '.$transaksi->rt->nomor
+                : null,
+            'nominal' => (float) $transaksi->nominal,
+            'jumlah_kk' => $transaksi->jumlah_kk_bayar,
+            'donatur' => $transaksi->donatur_anonim
+                ? 'Hamba Allah'
+                : $transaksi->nama_donatur,
+            'tujuan' => $transaksi->tujuan,
+            'catatan_publik' => $transaksi->catatan_publik,
+            'catatan_internal' => $transaksi->catatan_internal,
+            'status' => $transaksi->status,
+        ];
     }
 
     private function simpanLampiran(Request $request, Transaksi $transaksi, string $tipe): void

@@ -101,7 +101,7 @@ class MutasiDanaController extends Controller
     public function ubah(Request $request, MutasiDana $mutasi): JsonResponse
     {
         $data = $this->validasi($request, $mutasi);
-        $sebelum = $mutasi->only(['dari_pos_id', 'ke_pos_id', 'tanggal', 'nominal', 'keterangan']);
+        $sebelum = $this->nilaiAudit($mutasi);
 
         $mutasi->update([
             'dari_pos_id' => $data['dari_pos_id'],
@@ -119,7 +119,7 @@ class MutasiDanaController extends Controller
     public function hapus(Request $request, MutasiDana $mutasi): JsonResponse
     {
         $nominal = (float) $mutasi->nominal;
-        $sebelum = $mutasi->only(['dari_pos_id', 'ke_pos_id', 'tanggal', 'nominal', 'keterangan']);
+        $sebelum = $this->nilaiAudit($mutasi);
 
         $this->catatAudit($request, $mutasi, 'batal', $sebelum);
         $mutasi->delete();
@@ -240,9 +240,22 @@ class MutasiDanaController extends Controller
             'id_data' => $mutasi->id,
             'aksi' => $aksi,
             'nilai_lama' => $nilaiLama,
-            'nilai_baru' => $aksi === 'batal' ? null : $mutasi->only(['dari_pos_id', 'ke_pos_id', 'tanggal', 'nominal', 'keterangan']),
+            'nilai_baru' => $aksi === 'batal' ? null : $this->nilaiAudit($mutasi),
             'waktu' => now(),
         ]);
+    }
+
+    private function nilaiAudit(MutasiDana $mutasi): array
+    {
+        $mutasi->load(['dariPos', 'kePos']);
+
+        return [
+            'tanggal' => $mutasi->tanggal?->format('Y-m-d'),
+            'dari' => $mutasi->dariPos?->nama,
+            'ke' => $mutasi->kePos?->nama,
+            'nominal' => (float) $mutasi->nominal,
+            'keterangan' => $mutasi->keterangan,
+        ];
     }
 
     private function pesanValidasi(): array

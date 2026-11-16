@@ -1,9 +1,10 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h1 class="page-title">Selamat pagi, Bendahara</h1>
-            <p class="page-subtitle">Kamis, 12 November 2026</p>
+            <h1 class="page-title">{{ $sapaan }}, {{ $namaPengguna }}</h1>
+            <p class="page-subtitle">{{ $tanggalHariIni }}</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a class="btn btn-brand" href="{{ route('pemasukan') }}"><i class="bi bi-plus-lg"></i>Catat pemasukan</a>
@@ -17,8 +18,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Total saldo</span>
-                    <span class="stat-value">Rp64.645.000</span>
-                    <span class="stat-sub">4 pos dana</span>
+                    <span class="stat-value">Rp{{ number_format($totalSaldo, 0, ',', '.') }}</span>
+                    <span class="stat-sub">{{ $jumlahPos }} pos dana</span>
                 </div>
             </div>
         </div>
@@ -26,8 +27,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Pemasukan bulan ini</span>
-                    <span class="stat-value is-in">Rp2.710.000</span>
-                    <span class="stat-sub">Per 12 Nov</span>
+                    <span class="stat-value is-in">Rp{{ number_format($pemasukanBulanIni, 0, ',', '.') }}</span>
+                    <span class="stat-sub">{{ $labelBulanIni }}</span>
                 </div>
             </div>
         </div>
@@ -35,8 +36,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Pengeluaran bulan ini</span>
-                    <span class="stat-value is-out">Rp7.125.000</span>
-                    <span class="stat-sub">Per 12 Nov</span>
+                    <span class="stat-value is-out">Rp{{ number_format($pengeluaranBulanIni, 0, ',', '.') }}</span>
+                    <span class="stat-sub">{{ $labelBulanIni }}</span>
                 </div>
             </div>
         </div>
@@ -44,8 +45,14 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Setoran minggu ini</span>
-                    <span class="stat-value">13 dari 15 RT</span>
-                    <span class="stat-sub">Minggu, 8 Nov</span>
+                    <span class="stat-value">
+                        @if ($totalRt > 0)
+                            {{ $jumlahRtSetor }} dari {{ $totalRt }} RT
+                        @else
+                            Belum ada RT
+                        @endif
+                    </span>
+                    <span class="stat-sub">{{ $periodeSetoran }}</span>
                 </div>
             </div>
         </div>
@@ -54,32 +61,22 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-3">
-                <h2 class="section-title">Setoran iuran kematian, Minggu 8 Nov</h2>
+                <h2 class="section-title">Setoran iuran kematian, {{ $periodeSetoran }}</h2>
                 <a class="link-app" href="{{ route('pemasukan') }}">Catat setoran</a>
             </div>
 
-            <span class="lbl mb-2">RW 01</span>
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="chip chip-ok">RT 01</span>
-                <span class="chip chip-ok">RT 02</span>
-                <span class="chip chip-ok">RT 03</span>
-                <span class="chip chip-no">RT 04 belum</span>
-                <span class="chip chip-ok">RT 05</span>
-                <span class="chip chip-ok">RT 06</span>
-                <span class="chip chip-ok">RT 07</span>
-            </div>
-
-            <span class="lbl mb-2">RW 02</span>
-            <div class="d-flex flex-wrap gap-2">
-                <span class="chip chip-ok">RT 01</span>
-                <span class="chip chip-ok">RT 02</span>
-                <span class="chip chip-ok">RT 03</span>
-                <span class="chip chip-ok">RT 04</span>
-                <span class="chip chip-no">RT 05 belum</span>
-                <span class="chip chip-ok">RT 06</span>
-                <span class="chip chip-ok">RT 07</span>
-                <span class="chip chip-ok">RT 08</span>
-            </div>
+            @forelse ($setoranRw as $rw)
+                <span class="lbl mb-2">{{ $rw['nama'] }}</span>
+                <div class="d-flex flex-wrap gap-2 {{ $loop->last ? '' : 'mb-3' }}">
+                    @foreach ($rw['rt'] as $rt)
+                        <span class="chip {{ $rt['sudah'] ? 'chip-ok' : 'chip-no' }}">
+                            RT {{ $rt['nomor'] }}{{ $rt['sudah'] ? '' : ' belum' }}
+                        </span>
+                    @endforeach
+                </div>
+            @empty
+                <p class="hint mb-0">Data RT belum tersedia. Tambahkan wilayah RW dan RT terlebih dahulu.</p>
+            @endforelse
         </div>
     </div>
 
@@ -102,36 +99,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>09 Nov</td>
-                                    <td><span class="badge-soft badge-out">Keluar</span></td>
-                                    <td>Pembelian alat kebersihan</td>
-                                    <td class="num">Rp125.000</td>
-                                </tr>
-                                <tr>
-                                    <td>08 Nov</td>
-                                    <td><span class="badge-soft badge-in">Masuk</span></td>
-                                    <td>Setoran iuran kematian, RW 01 RT 03</td>
-                                    <td class="num">Rp165.000</td>
-                                </tr>
-                                <tr>
-                                    <td>08 Nov</td>
-                                    <td><span class="badge-soft badge-in">Masuk</span></td>
-                                    <td>Setoran iuran kematian, RW 02 RT 01</td>
-                                    <td class="num">Rp185.000</td>
-                                </tr>
-                                <tr>
-                                    <td>06 Nov</td>
-                                    <td><span class="badge-soft badge-out">Keluar</span></td>
-                                    <td>Uang muka konsumsi sedekah bumi</td>
-                                    <td class="num">Rp4.500.000</td>
-                                </tr>
-                                <tr>
-                                    <td>06 Nov</td>
-                                    <td><span class="badge-soft badge-in">Masuk</span></td>
-                                    <td>Uang kotak Jumat</td>
-                                    <td class="num">Rp850.000</td>
-                                </tr>
+                                @forelse ($transaksiTerbaru as $item)
+                                    <tr>
+                                        <td>{{ $item['tanggal'] }}</td>
+                                        <td>
+                                            <span class="badge-soft {{ $item['jenis'] === 'masuk' ? 'badge-in' : 'badge-out' }}">
+                                                {{ $item['jenis'] === 'masuk' ? 'Masuk' : 'Keluar' }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $item['keterangan'] }}</td>
+                                        <td class="num"
+                                            style="color: {{ $item['jenis'] === 'masuk' ? 'var(--ks-success-text)' : 'var(--ks-warning-text)' }}; white-space: nowrap;">
+                                            {{ $item['jenis'] === 'masuk' ? '+' : '-' }}Rp{{ number_format($item['nominal'], 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="hint">Belum ada transaksi.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -144,12 +130,24 @@
                 <div class="card-body">
                     <h2 class="section-title mb-3">Perlu perhatian</h2>
                     <div class="d-flex flex-column gap-3">
-                        <div class="notice notice-amber">2 RT belum menyetor iuran kematian minggu ini.
-                        </div>
-                        <div class="notice notice-green">Realisasi sedekah bumi baru 21% dari anggaran.
-                        </div>
-                        <div class="notice notice-neutral">Jumat ini: jangan lupa catat uang kotak masjid.
-                        </div>
+                        @if ($totalRt === 0)
+                            <div class="notice notice-neutral">Data RT belum diisi. Lengkapi wilayah agar setoran bisa
+                                dipantau.</div>
+                        @elseif ($rtBelumSetor > 0)
+                            <div class="notice notice-amber">{{ $rtBelumSetor }} RT belum menyetor iuran kematian minggu
+                                ini.</div>
+                        @else
+                            <div class="notice notice-green">Semua RT sudah menyetor iuran kematian minggu ini.</div>
+                        @endif
+
+                        @if ($acara)
+                            <div class="notice notice-green">Realisasi {{ $acara->nama }} baru
+                                {{ $persenRealisasiAcara }}% dari anggaran.</div>
+                        @else
+                            <div class="notice notice-neutral">Belum ada acara sedekah bumi yang disusun.</div>
+                        @endif
+
+                        <div class="notice notice-neutral">Jumat ini: jangan lupa catat uang kotak masjid.</div>
                     </div>
                 </div>
             </div>

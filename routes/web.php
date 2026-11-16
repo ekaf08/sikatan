@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\AcaraController;
 use App\Http\Controllers\Admin\AkunController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\LogAuditController;
 use App\Http\Controllers\Admin\MutasiDanaController;
 use App\Http\Controllers\Admin\PemasukanController;
 use App\Http\Controllers\Admin\PengeluaranController;
@@ -37,9 +39,7 @@ Route::middleware(['auth', 'nocache'])->group(function () {
 
 // Area bendahara dan admin
 Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/pemasukan', [PemasukanController::class, 'index'])->name('pemasukan');
 
@@ -94,7 +94,9 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
         Route::get('/ekspor/excel', [LaporanController::class, 'eksporExcel'])->name('excel');
     });
 
-    Route::view('/log-audit', 'pages.log-audit')->name('log-audit');
+    Route::get('/log-audit', [LogAuditController::class, 'index'])->name('log-audit');
+
+    Route::get('/log-audit/data', [LogAuditController::class, 'data'])->name('log-audit.data');
 
     Route::get('/master/wilayah', [WilayahController::class, 'index'])->name('master-wilayah');
 
