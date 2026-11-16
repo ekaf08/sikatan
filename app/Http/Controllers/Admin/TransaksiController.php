@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PosDana;
 use App\Models\Transaksi;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
@@ -13,15 +15,26 @@ class TransaksiController extends Controller
 {
     public function index(): View
     {
-        return view('pages.transaksi');
+        return view('pages.transaksi', [
+            'posDana' => PosDana::query()->orderBy('nama')->get(),
+        ]);
     }
 
-    public function data(): JsonResponse
+    public function data(Request $request): JsonResponse
     {
         $query = Transaksi::query()
-            ->with(['posDana', 'kategori', 'rt.rw', 'acara'])
+            ->withTrashed()
+            ->with([
+                'posDana',
+                'kategori',
+                'rt.rw',
+                'acara',
+                'lampiran' => fn ($lampiran) => $lampiran->withTrashed(),
+            ])
             ->orderByDesc('tanggal')
             ->orderByDesc('id');
+
+        $this->terapkanFilter($query, $request);
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
@@ -34,11 +47,13 @@ class TransaksiController extends Controller
             ->addColumn('pos_nama', fn (Transaksi $transaksi): string => $transaksi->posDana?->nama ?? '-')
             ->addColumn('kategori_nama', fn (Transaksi $transaksi): string => $transaksi->kategori?->nama ?? '-')
             ->addColumn('keterangan', fn (Transaksi $transaksi): string => $this->keterangan($transaksi))
+            ->addColumn('foto', fn (Transaksi $transaksi): string => $this->fotoHtml($transaksi))
             ->addColumn('nominal_format', fn (Transaksi $transaksi): string => $this->nominal($transaksi))
-            ->addColumn('status_label', fn (Transaksi $transaksi): string => $transaksi->status === 'batal'
+            ->addColumn('status_label', fn (Transaksi $transaksi): string => $this->statusBatal($transaksi)
                 ? '<span class="badge-soft badge-neutral">Batal</span>'
                 : '<span class="badge-soft badge-in">Aktif</span>')
-            ->addColumn('status_nilai', fn (Transaksi $transaksi): string => $transaksi->status)
+            ->addColumn('status_nilai', fn (Transaksi $transaksi): string => $this->statusBatal($transaksi) ? 'batal' : 'aktif')
+            ->addColumn('aksi', fn (Transaksi $transaksi): string => '<button type="button" class="btn btn-sm btn-outline-secondary btn-detail-transaksi" data-id="'.$transaksi->id.'" title="Lihat detail"><i class="bi bi-eye"></i></button>')
             ->filterColumn('pos_nama', function ($query, string $keyword): void {
                 $query->whereHas('posDana', fn ($sub) => $this->cariNama($sub, 'nama', $keyword));
             })
@@ -74,8 +89,101 @@ class TransaksiController extends Controller
                         ->orWhereHas('rt', fn ($rt) => $rt->whereRaw('LOWER(nomor) LIKE ?', [$kata]));
                 });
             })
-            ->rawColumns(['jenis_label', 'keterangan', 'nominal_format', 'status_label'])
+            ->rawColumns(['jenis_label', 'keterangan', 'foto', 'nominal_format', 'status_label', 'aksi'])
             ->toJson();
+    }
+
+    public function detail(int $id): View
+    {
+        $transaksi = Transaksi::query()
+            ->withTrashed()
+            ->with([
+                'posDana',
+                'kategori',
+                'rt.rw',
+                'acara',
+                'anggaranAcara',
+                'dibuatOleh',
+                'lampiran' => fn ($lampiran) => $lampiran->withTrashed(),
+            ])
+            ->findOrFail($id);
+
+        return view('pages.partials.transaksi-detail', compact('transaksi'));
+    }
+
+    private function terapkanFilter($query, Request $request): void
+    {
+        $jenis = $request->input('jenis');
+
+        if (in_array($jenis, ['masuk', 'keluar'], true)) {
+            $query->where('jenis', $jenis);
+        }
+
+        $posDanaId = $request->input('pos_dana_id');
+
+        if ($posDanaId !== null && $posDanaId !== '' && ctype_digit((string) $posDanaId)) {
+            $query->where('pos_dana_id', (int) $posDanaId);
+        }
+
+        $status = $request->input('status');
+
+        if ($status === 'aktif') {
+            $query->whereNull('deleted_at')->where('status', 'aktif');
+        } elseif ($status === 'batal') {
+            $query->where(function ($sub): void {
+                $sub->whereNotNull('deleted_at')->orWhere('status', 'batal');
+            });
+        }
+
+        $dari = $request->input('dari');
+
+        if ($this->tanggalValid($dari)) {
+            $query->whereDate('tanggal', '>=', $dari);
+        }
+
+        $sampai = $request->input('sampai');
+
+        if ($this->tanggalValid($sampai)) {
+            $query->whereDate('tanggal', '<=', $sampai);
+        }
+    }
+
+    private function tanggalValid(?string $tanggal): bool
+    {
+        if (! $tanggal) {
+            return false;
+        }
+
+        $hasil = \DateTime::createFromFormat('Y-m-d', $tanggal);
+
+        return $hasil !== false && $hasil->format('Y-m-d') === $tanggal;
+    }
+
+    private function fotoHtml(Transaksi $transaksi): string
+    {
+        if ($transaksi->lampiran->isEmpty()) {
+            return '<span class="hint">&mdash;</span>';
+        }
+
+        $html = '<div class="d-flex flex-wrap gap-1">';
+
+        foreach ($transaksi->lampiran->take(3) as $lampiran) {
+            $url = e(asset('storage/'.$lampiran->lokasi_berkas));
+            $html .= '<a href="'.$url.'" target="_blank" rel="noopener">'
+                .'<img src="'.$url.'" alt="Foto transaksi" style="width:40px;height:40px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
+                .'</a>';
+        }
+
+        if ($transaksi->lampiran->count() > 3) {
+            $html .= '<span class="badge-soft badge-neutral">+'.($transaksi->lampiran->count() - 3).'</span>';
+        }
+
+        return $html.'</div>';
+    }
+
+    private function statusBatal(Transaksi $transaksi): bool
+    {
+        return $transaksi->trashed() || $transaksi->status === 'batal';
     }
 
     private function keterangan(Transaksi $transaksi): string

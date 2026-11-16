@@ -63,6 +63,7 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
 
     Route::get('/transaksi/data', [TransaksiController::class, 'data'])->name('transaksi.data');
+    Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaksi.detail');
 
     Route::get('/mutasi-dana', [MutasiDanaController::class, 'index'])->name('mutasi-dana');
 

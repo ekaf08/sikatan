@@ -17,6 +17,9 @@
     <!-- CSS DataTables Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 
+    <!-- CSS Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+
     <style>
         /* 1. Area Filter (Tampil & Cari) */
         .dataTables_wrapper .dataTables_length,
