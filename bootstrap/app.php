@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'nocache' => \App\Http\Middleware\NoCache::class,
             'paksa.ganti' => \App\Http\Middleware\PaksaGantiPassword::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            'webhook/midtrans',
+        ]);
         $middleware->redirectGuestsTo(fn () => route('login'));
         $middleware->redirectUsersTo(fn () => route('dashboard'));
     })

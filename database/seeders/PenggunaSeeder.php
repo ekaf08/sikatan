@@ -37,5 +37,19 @@ class PenggunaSeeder extends Seeder
                 'updated_at' => $sekarang,
             ]
         );
+
+        // Akun sistem untuk auto-posting transaksi dari payment gateway (tidak untuk login)
+        DB::table('users')->updateOrInsert(
+            ['email' => 'sistem@babatan.test'],
+            [
+                'name' => 'Sistem Pembayaran',
+                'password' => Hash::make(str()->random(40)),
+                'role' => 'admin',
+                'username' => 'sistem',
+                'aktif' => false,
+                'created_at' => $sekarang,
+                'updated_at' => $sekarang,
+            ]
+        );
     }
 }

@@ -14,10 +14,17 @@ use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\Auth\GantiPasswordController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PembayaranPublikController;
+use App\Http\Controllers\Webhook\MidtransWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Beranda publik (tanpa login)
 Route::view('/', 'fo.home')->name('publik');
+
+// Donasi publik & webhook Midtrans (tanpa login, webhook tanpa CSRF - dikecualikan di bootstrap/app.php)
+Route::post('/donasi/bayar', [PembayaranPublikController::class, 'buat'])->name('donasi.buat');
+Route::get('/donasi/selesai', [PembayaranPublikController::class, 'selesai'])->name('donasi.selesai');
+Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
 
 Route::redirect('/login', '/masuk');
 
