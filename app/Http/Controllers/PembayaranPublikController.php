@@ -15,7 +15,7 @@ class PembayaranPublikController extends Controller
     public function buat(Request $request, MidtransGateway $gateway): JsonResponse|RedirectResponse
     {
         $data = $request->validate([
-            'nominal' => ['required', 'numeric', 'min:1000'],
+            'nominal' => ['required', 'numeric', 'min:1000', 'max:100000000'],
             'nama_donatur' => ['nullable', 'string', 'max:255'],
             'donatur_anonim' => ['nullable', 'boolean'],
             'tujuan' => ['nullable', 'string', 'max:255'],
@@ -26,6 +26,7 @@ class PembayaranPublikController extends Controller
             'nominal.required' => 'Nominal donasi wajib diisi.',
             'nominal.numeric' => 'Nominal harus berupa angka.',
             'nominal.min' => 'Nominal minimal Rp1.000.',
+            'nominal.max' => 'Nominal maksimal Rp100.000.000.',
         ]);
 
         $anonim = $request->boolean('donatur_anonim');
@@ -42,6 +43,7 @@ class PembayaranPublikController extends Controller
             'catatan_publik' => $data['catatan_publik'] ?? null,
             'email' => $data['email'] ?? null,
             'no_hp' => $data['no_hp'] ?? null,
+            'expired_at' => now()->addDay(),
         ]);
 
         try {

@@ -36,6 +36,10 @@
             @if (request()->routeIs('transaksi')) aria-current="page" @endif data-label="Daftar transaksi">
             <i class="bi bi-list-ul"></i><span class="nav-text">Daftar transaksi</span>
         </a>
+        <a class="nav-item-app @if (request()->routeIs('pembayaran')) active @endif" href="{{ route('pembayaran') }}"
+            @if (request()->routeIs('pembayaran')) aria-current="page" @endif data-label="Pembayaran online">
+            <i class="bi bi-credit-card"></i><span class="nav-text">Pembayaran online</span>
+        </a>
         <a class="nav-item-app @if (request()->routeIs('mutasi-dana')) active @endif" href="{{ route('mutasi-dana') }}"
             @if (request()->routeIs('mutasi-dana')) aria-current="page" @endif data-label="Mutasi dana">
             <i class="bi bi-arrow-left-right"></i><span class="nav-text">Mutasi dana</span>

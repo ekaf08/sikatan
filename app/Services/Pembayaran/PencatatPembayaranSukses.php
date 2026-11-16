@@ -21,55 +21,82 @@ class PencatatPembayaranSukses
      *
      * @param array<string,mixed> $payload
      */
-    public function proses(Pembayaran $pembayaran, array $payload, string $channel = null): Pembayaran
+    public function proses(Pembayaran $pembayaran, array $payload, ?string $channel = null): Pembayaran
     {
-        return DB::transaction(function () use ($pembayaran, $payload, $channel): Pembayaran {
-            /** @var Pembayaran $terkunci */
-            $terkunci = Pembayaran::query()->whereKey($pembayaran->id)->lockForUpdate()->firstOrFail();
+        try {
+            return DB::transaction(function () use ($pembayaran, $payload, $channel): Pembayaran {
+                /** @var Pembayaran $terkunci */
+                $terkunci = Pembayaran::query()->whereKey($pembayaran->id)->lockForUpdate()->firstOrFail();
 
-            $meta = $terkunci->meta ?? [];
-            $meta['notifikasi_terakhir'] = now()->toIso8601String();
-            $terkunci->payload_notifikasi = $payload;
-            $terkunci->channel = $channel ?: ($payload['payment_type'] ?? $terkunci->channel);
-            $terkunci->meta = $meta;
-
-            if ($terkunci->status === 'settlement' && $terkunci->transaksi_id) {
-                $terkunci->save();
-                return $terkunci->refresh();
-            }
-
-            $grossAmount = (string) ($payload['gross_amount'] ?? '');
-            $nominalOrder = number_format((float) $terkunci->nominal, 2, '.', '');
-            $nominalNotif = is_numeric($grossAmount) ? number_format((float) $grossAmount, 2, '.', '') : $grossAmount;
-            if ($nominalNotif !== $nominalOrder) {
-                $meta['error_terakhir'] = 'Nominal notifikasi tidak cocok.';
-                $terkunci->status = 'gagal';
+                $meta = $terkunci->meta ?? [];
+                $meta['notifikasi_terakhir'] = now()->toIso8601String();
+                $terkunci->payload_notifikasi = $payload;
+                $terkunci->channel = $channel ?: ($payload['payment_type'] ?? $terkunci->channel);
                 $terkunci->meta = $meta;
-                $terkunci->save();
-                Log::warning('Midtrans nominal mismatch', ['order_id' => $terkunci->order_id, 'order' => $nominalOrder, 'notif' => $nominalNotif]);
-                return $terkunci->refresh();
-            }
 
-            try {
+                if ($terkunci->status === 'settlement' && $terkunci->transaksi_id) {
+                    $terkunci->save();
+                    return $terkunci->refresh();
+                }
+
+                $grossAmount = (string) ($payload['gross_amount'] ?? '');
+                $nominalOrder = number_format((float) $terkunci->nominal, 2, '.', '');
+                $nominalNotif = is_numeric($grossAmount) ? number_format((float) $grossAmount, 2, '.', '') : $grossAmount;
+                if ($nominalNotif !== $nominalOrder) {
+                    $meta['error_terakhir'] = 'Nominal notifikasi tidak cocok.';
+                    $terkunci->status = 'gagal';
+                    $terkunci->meta = $meta;
+                    $terkunci->save();
+                    Log::warning('Midtrans nominal mismatch', ['order_id' => $terkunci->order_id, 'order' => $nominalOrder, 'notif' => $nominalNotif]);
+                    return $terkunci->refresh();
+                }
+
                 $transaksi = $this->buatTransaksiDonasi($terkunci);
-            } catch (\Throwable $e) {
-                $meta['error_terakhir'] = $e->getMessage();
-                $terkunci->meta = $meta;
+
+                $terkunci->status = 'settlement';
+                $terkunci->transaksi_id = $transaksi->id;
+                $terkunci->dibayar_pada = now();
                 $terkunci->save();
-                Log::error('Gagal auto-posting transaksi pembayaran', ['order_id' => $terkunci->order_id, 'error' => $e->getMessage()]);
-                throw $e;
-            }
 
-            $terkunci->status = 'settlement';
-            $terkunci->transaksi_id = $transaksi->id;
-            $terkunci->dibayar_pada = now();
-            $terkunci->save();
+                $this->audit->catat($this->userSistem(), 'transaksi', $transaksi->id, 'tambah', null, $this->nilaiAudit($transaksi));
+                $this->audit->catat($this->userSistem(), 'pembayaran', $terkunci->id, 'ubah', ['status' => 'pending'], ['status' => 'settlement', 'transaksi_id' => $transaksi->id]);
 
-            $this->audit->catat($this->userSistem(), 'transaksi', $transaksi->id, 'tambah', null, $this->nilaiAudit($transaksi));
-            $this->audit->catat($this->userSistem(), 'pembayaran', $terkunci->id, 'ubah', ['status' => 'pending'], ['status' => 'settlement', 'transaksi_id' => $transaksi->id]);
+                return $terkunci->refresh();
+            });
+        } catch (\Throwable $e) {
+            $this->catatKegagalan($pembayaran, $payload, $e->getMessage());
 
-            return $terkunci->refresh();
-        });
+            throw $e;
+        }
+    }
+
+    /**
+     * Catat kegagalan posting di luar transaksi utama agar tidak ikut ter-rollback.
+     *
+     * @param array<string,mixed> $payload
+     */
+    private function catatKegagalan(Pembayaran $pembayaran, array $payload, string $pesan): void
+    {
+        try {
+            DB::transaction(function () use ($pembayaran, $payload, $pesan): void {
+                /** @var Pembayaran|null $terkunci */
+                $terkunci = Pembayaran::query()->whereKey($pembayaran->id)->lockForUpdate()->first();
+
+                if (! $terkunci) {
+                    return;
+                }
+
+                $meta = $terkunci->meta ?? [];
+                $meta['error_terakhir'] = $pesan;
+                $terkunci->meta = $meta;
+                $terkunci->payload_notifikasi = $payload;
+                $terkunci->save();
+            });
+        } catch (\Throwable $logError) {
+            Log::error('Gagal mencatat kegagalan pembayaran', ['order_id' => $pembayaran->order_id, 'error' => $logError->getMessage()]);
+        }
+
+        Log::error('Gagal auto-posting transaksi pembayaran', ['order_id' => $pembayaran->order_id, 'error' => $pesan]);
     }
 
     /**

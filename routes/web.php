@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\LogAuditController;
 use App\Http\Controllers\Admin\MutasiDanaController;
 use App\Http\Controllers\Admin\PemasukanController;
+use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\PengeluaranController;
 use App\Http\Controllers\Admin\PosDanaController;
 use App\Http\Controllers\Admin\TransaksiController;
@@ -22,7 +23,9 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'fo.home')->name('publik');
 
 // Donasi publik & webhook Midtrans (tanpa login, webhook tanpa CSRF - dikecualikan di bootstrap/app.php)
-Route::post('/donasi/bayar', [PembayaranPublikController::class, 'buat'])->name('donasi.buat');
+Route::post('/donasi/bayar', [PembayaranPublikController::class, 'buat'])
+    ->middleware('throttle:10,1')
+    ->name('donasi.buat');
 Route::get('/donasi/selesai', [PembayaranPublikController::class, 'selesai'])->name('donasi.selesai');
 Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');
 
@@ -71,6 +74,9 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
 
     Route::get('/transaksi/data', [TransaksiController::class, 'data'])->name('transaksi.data');
     Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaksi.detail');
+
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
+    Route::get('/pembayaran/data', [PembayaranController::class, 'data'])->name('pembayaran.data');
 
     Route::get('/mutasi-dana', [MutasiDanaController::class, 'index'])->name('mutasi-dana');
 
