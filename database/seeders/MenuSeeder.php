@@ -16,10 +16,9 @@ class MenuSeeder extends Seeder
 
         $publik = [
             ['judul' => 'Beranda', 'slug' => 'publik-beranda', 'tipe' => 'route', 'route_name' => 'publik', 'url' => null, 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 10, 'peran' => 'semua'],
-            ['judul' => 'Pengeluaran', 'slug' => 'publik-pengeluaran', 'tipe' => 'tautan', 'route_name' => null, 'url' => '#pengeluaran', 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 20, 'peran' => 'semua'],
-            ['judul' => 'Pemasukan', 'slug' => 'publik-pemasukan', 'tipe' => 'tautan', 'route_name' => null, 'url' => '#pemasukan', 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 30, 'peran' => 'semua'],
-            ['judul' => 'Donasi', 'slug' => 'publik-donasi', 'tipe' => 'tautan', 'route_name' => null, 'url' => '#donasi', 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 40, 'peran' => 'semua'],
-            ['judul' => 'Masuk bendahara', 'slug' => 'publik-login', 'tipe' => 'route', 'route_name' => 'login', 'url' => null, 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 50, 'peran' => 'tamu'],
+            ['judul' => 'Iuran Kematian', 'slug' => 'publik-iuran-kematian', 'tipe' => 'route', 'route_name' => 'iuran-kematian', 'url' => null, 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 20, 'peran' => 'semua'],
+            ['judul' => 'Donasi', 'slug' => 'publik-donasi', 'tipe' => 'route', 'route_name' => 'donasi', 'url' => null, 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 30, 'peran' => 'semua'],
+            ['judul' => 'Masuk bendahara', 'slug' => 'publik-login', 'tipe' => 'route', 'route_name' => 'login', 'url' => null, 'ikon' => null, 'area' => 'publik', 'bagian' => 'utama', 'urutan' => 40, 'peran' => 'tamu'],
         ];
 
         foreach ($publik as $m) {

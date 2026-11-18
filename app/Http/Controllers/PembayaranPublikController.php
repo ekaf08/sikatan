@@ -63,7 +63,7 @@ class PembayaranPublikController extends Controller
                 return response()->json(['message' => 'Gagal membuat pembayaran: '.$e->getMessage()], 422);
             }
 
-            return redirect()->to(route('publik').'#donasi')->with('donasi_error', 'Gagal memproses pembayaran. Pastikan konfigurasi Midtrans sudah benar.');
+            return redirect()->route('donasi')->with('donasi_error', 'Gagal memproses pembayaran. Pastikan konfigurasi Midtrans sudah benar.');
         }
 
         if ($request->expectsJson()) {

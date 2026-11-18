@@ -11,28 +11,7 @@
         <link href="{{ asset('sikatan/assets/css/app.css') }}" rel="stylesheet">
     </head>
     <body>
-        @php
-            $menuLayanan = app(\App\Services\MenuLayanan::class);
-            $menuPublik = $menuLayanan->ambil('publik', auth()->user());
-        @endphp
-        <header class="public-header">
-            <div class="public-header-inner">
-                <div class="public-brand">
-                    <strong>Sistem Kampung Babatan</strong>
-                    <span>Portal informasi dan transparansi kampung</span>
-                </div>
-                <nav class="public-nav" aria-label="Navigasi publik">
-                    @if ($menuPublik->isNotEmpty())
-                        @foreach ($menuPublik as $menu)
-                            <a href="{{ $menuLayanan->href($menu) }}" @if ($menu->target === '_blank') target="_blank" rel="noopener" @endif>{{ $menu->judul }}</a>
-                        @endforeach
-                    @else
-                        <a href="{{ route('publik') }}">Beranda</a>
-                        <a href="{{ route('login') }}">Masuk bendahara</a>
-                    @endif
-                </nav>
-            </div>
-        </header>
+        @include('fo.partials.public-header')
 
         <main class="public-main">
             <div class="card" style="max-width:720px;margin:0 auto;">
@@ -78,7 +57,7 @@
                     @endif
 
                     <div class="mt-4">
-                        <a class="btn btn-brand" href="{{ route('publik') }}#donasi">Kembali ke Beranda</a>
+                        <a class="btn btn-brand" href="{{ route('donasi') }}">Kembali ke Donasi</a>
                     </div>
                 </div>
             </div>
