@@ -132,7 +132,6 @@ class IuranKematianPublikController extends Controller
             'jumlahRt' => $daftarRt->count(),
             'jumlahSudahSetor' => $daftarRt->count() - $jumlahBelumSetor,
             'jumlahBelumSetor' => $jumlahBelumSetor,
-            'jumlahMinggu' => $jumlahMinggu,
             'peringatanMinggu' => $peringatanMinggu,
             'filter' => [
                 'tahun' => $tahun,

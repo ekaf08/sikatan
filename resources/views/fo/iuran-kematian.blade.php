@@ -31,7 +31,7 @@
                             <label class="form-label-app" for="filterMinggu">Minggu ke</label>
                             <select class="form-select" id="filterMinggu" name="minggu">
                                 <option value="0" @selected($filter['minggu'] === 0)>Semua minggu</option>
-                                @foreach (range(1, $jumlahMinggu) as $minggu)
+                                @foreach (range(1, 5) as $minggu)
                                     <option value="{{ $minggu }}" @selected($filter['minggu'] === $minggu)>
                                         Minggu {{ $minggu }}
                                     </option>
@@ -164,6 +164,7 @@
         </main>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
         (function () {
             const form = document.getElementById('formFilterIuran');
@@ -177,28 +178,33 @@
                 return Math.ceil(hari / 7);
             }
 
-            function perbaruiMinggu() {
+            function namaBulan() {
+                return bulan.options[bulan.selectedIndex].text.trim();
+            }
+
+            form.addEventListener('submit', function (e) {
                 const maks = maksMinggu();
                 const terpilih = parseInt(minggu.value, 10);
 
-                minggu.innerHTML = '';
-                const semua = document.createElement('option');
-                semua.value = '0';
-                semua.textContent = 'Semua minggu';
-                minggu.appendChild(semua);
+                if (terpilih > maks) {
+                    e.preventDefault();
 
-                for (let i = 1; i <= maks; i++) {
-                    const opsi = document.createElement('option');
-                    opsi.value = String(i);
-                    opsi.textContent = 'Minggu ' + i;
-                    minggu.appendChild(opsi);
+                    const pesan = 'Bulan ' + namaBulan() + ' ' + tahun.value + ' hanya memiliki '
+                        + maks + ' minggu, sehingga minggu ke-' + terpilih + ' tidak tersedia.';
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Minggu tidak tersedia',
+                            text: pesan,
+                            confirmButtonText: 'Mengerti',
+                            confirmButtonColor: '#17443a'
+                        });
+                    } else {
+                        window.alert(pesan);
+                    }
                 }
-
-                minggu.value = terpilih >= 1 && terpilih <= maks ? String(terpilih) : '0';
-            }
-
-            bulan.addEventListener('change', perbaruiMinggu);
-            tahun.addEventListener('change', perbaruiMinggu);
+            });
         })();
         </script>
     </body>
