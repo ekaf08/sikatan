@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Master Kategori - Kas Desa Babatan')
+@section('title', 'Master Kategori - Sistem Kampung Babatan')
 
 @section('topbarTitle', 'Master data')
 @section('topbarSubtitle', 'Kategori transaksi')

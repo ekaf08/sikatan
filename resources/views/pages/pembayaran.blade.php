@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pembayaran Online - Kas Desa Babatan')
+@section('title', 'Pembayaran Online - Sistem Kampung Babatan')
 
 @section('topbarTitle', 'Pembayaran online')
 @section('topbarSubtitle', 'Rekap donasi Midtrans')

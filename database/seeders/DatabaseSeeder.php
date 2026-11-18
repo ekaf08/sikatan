@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             PosDanaSeeder::class,
             KategoriSeeder::class,
             PengaturanSeeder::class,
+            MenuSeeder::class,
             AcaraSeeder::class,
             TransaksiDummySeeder::class,
         ]);

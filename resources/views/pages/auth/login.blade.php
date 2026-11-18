@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Masuk &mdash; Kas Desa Babatan</title>
+        <title>Masuk &mdash; Sistem Kampung Babatan</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -20,7 +20,7 @@
                 <div class="login-brand-head">
                     <span class="brand-mark"><i class="bi bi-wallet2"></i></span>
                     <div class="d-flex flex-column">
-                        <strong style="font-size:20px;font-weight:700">Kas Desa Babatan</strong>
+                        <strong style="font-size:20px;font-weight:700">Sistem Kampung Babatan</strong>
                         <span style="font-size:13px;color:#bfd3cb">Area bendahara dan admin</span>
                     </div>
                 </div>

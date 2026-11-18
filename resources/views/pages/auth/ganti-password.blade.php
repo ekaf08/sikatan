@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Ganti Kata Sandi — Kas Desa Babatan')
+@section('title', 'Ganti Kata Sandi â€” Sistem Kampung Babatan')
 
 @section('topbarTitle', 'Ganti kata sandi')
 @section('topbarSubtitle', 'Perbarui kata sandi akun')

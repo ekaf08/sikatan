@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Beranda Publik &mdash; Kas Desa Babatan</title>
+        <title>Beranda - Sistem Kampung Babatan</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -15,19 +15,35 @@
     </head>
 
     <body>
+        @php
+            $menuLayanan = app(\App\Services\MenuLayanan::class);
+            $menuPublik = $menuLayanan->ambil('publik', auth()->user());
+        @endphp
         <header class="public-header">
             <div class="public-header-inner">
                 <div class="public-brand">
-                    <strong>Kas Desa Babatan</strong>
-                    <span>Laporan keuangan terbuka untuk warga</span>
+                    <strong>Sistem Kampung Babatan</strong>
+                    <span>Portal informasi dan transparansi kampung</span>
                 </div>
 
                 <nav class="public-nav" aria-label="Navigasi publik">
-                    <a class="active" href="{{ route('publik') }}" aria-current="page">Beranda</a>
-                    <a href="#pengeluaran">Pengeluaran</a>
-                    <a href="#pemasukan">Pemasukan</a>
-                    <a href="#donasi">Donasi</a>
-                    <a href="{{ route('login') }}">Masuk bendahara</a>
+                    @if ($menuPublik->isNotEmpty())
+                        @foreach ($menuPublik as $menu)
+                            @php
+                                $href = $menuLayanan->href($menu);
+                                $isActive = $menu->tipe === 'route' && $menu->route_name === 'publik' && request()->routeIs('publik');
+                            @endphp
+                            <a href="{{ $href }}" class="{{ $isActive ? 'active' : '' }}"
+                                @if ($isActive) aria-current="page" @endif
+                                @if ($menu->target === '_blank') target="_blank" rel="noopener" @endif>{{ $menu->judul }}</a>
+                        @endforeach
+                    @else
+                        <a class="active" href="{{ route('publik') }}" aria-current="page">Beranda</a>
+                        <a href="#pengeluaran">Pengeluaran</a>
+                        <a href="#pemasukan">Pemasukan</a>
+                        <a href="#donasi">Donasi</a>
+                        <a href="{{ route('login') }}">Masuk bendahara</a>
+                    @endif
                 </nav>
             </div>
         </header>
@@ -35,7 +51,7 @@
         <main class="public-main">
             <section class="d-flex flex-wrap align-items-end justify-content-between gap-4 mb-4">
                 <div>
-                    <span class="lbl mb-2">Total saldo kas desa</span>
+                    <span class="lbl mb-2">Total saldo kas kampung</span>
                     <h1 class="saldo-value">Rp{{ number_format($totalSaldo, 0, ',', '.') }}</h1>
                     <p class="page-subtitle mt-1">
                         @if ($terakhirDiperbarui)
@@ -201,14 +217,14 @@
                 <div style="max-width:720px">
                     <h2 class="section-title" style="font-size:16px;color:#17443a">Laporan terbuka, perubahan tercatat</h2>
                     <p class="mt-1" style="font-size:14px;line-height:1.6;color:#3f4a44">
-                        Data di halaman ini bersumber dari pencatatan kas. Transaksi yang salah tidak dihapus, tetapi ditandai batal beserta alasannya. Informasi sensitif dan lampiran yang disembunyikan tidak ditampilkan kepada publik.
+                        Data di halaman ini bersumber dari pencatatan kas kampung. Transaksi yang salah tidak dihapus, tetapi ditandai batal beserta alasannya. Informasi sensitif dan lampiran yang disembunyikan tidak ditampilkan kepada publik.
                     </p>
                 </div>
                 <a class="btn btn-brand" href="#pengeluaran">Lihat pengeluaran</a>
             </div>
 
             <footer class="d-flex flex-wrap justify-content-between gap-2 py-4 mt-2 hint">
-                <span>&copy; {{ date('Y') }} Kas Desa Babatan.</span>
+                <span>&copy; {{ date('Y') }} Sistem Kampung Babatan.</span>
                 <span>Transparan, rapi, dan dapat diaudit.</span>
             </footer>
         </main>

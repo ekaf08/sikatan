@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pengaturan — Kas Desa Babatan')
+@section('title', 'Pengaturan â€” Sistem Kampung Babatan')
 
 @section('topbarTitle', 'Pengaturan')
 @section('topbarSubtitle', 'Kop, penandatangan, akun')

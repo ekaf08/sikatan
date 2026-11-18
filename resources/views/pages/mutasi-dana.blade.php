@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Mutasi Dana — Kas Desa Babatan')
+@section('title', 'Mutasi Dana â€” Sistem Kampung Babatan')
 
 @section('topbarTitle', 'Mutasi dana')
 @section('topbarSubtitle', 'Pindah saldo antar pos')
@@ -45,7 +45,7 @@
                 <div class="card-body">
                     <span class="stat-label">Mutasi terakhir</span>
                     <span class="stat-value" id="statTerakhir" style="font-size:18px">
-                        {{ $terakhirMutasi ? ($terakhirMutasi->dariPos?->nama ?? '-') . ' → ' . ($terakhirMutasi->kePos?->nama ?? '-') : '-' }}
+                        {{ $terakhirMutasi ? ($terakhirMutasi->dariPos?->nama ?? '-') . ' â†’ ' . ($terakhirMutasi->kePos?->nama ?? '-') : '-' }}
                     </span>
                     <span class="stat-sub" id="statTerakhirTanggal">
                         {{ $terakhirMutasi?->tanggal?->copy()->locale('id')->translatedFormat('d M Y') ?? '-' }}

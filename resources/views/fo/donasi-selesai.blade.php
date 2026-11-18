@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Status Donasi &mdash; Kas Desa Babatan</title>
+        <title>Status Donasi - Sistem Kampung Babatan</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,15 +11,25 @@
         <link href="{{ asset('sikatan/assets/css/app.css') }}" rel="stylesheet">
     </head>
     <body>
+        @php
+            $menuLayanan = app(\App\Services\MenuLayanan::class);
+            $menuPublik = $menuLayanan->ambil('publik', auth()->user());
+        @endphp
         <header class="public-header">
             <div class="public-header-inner">
                 <div class="public-brand">
-                    <strong>Kas Desa Babatan</strong>
-                    <span>Laporan keuangan terbuka untuk warga</span>
+                    <strong>Sistem Kampung Babatan</strong>
+                    <span>Portal informasi dan transparansi kampung</span>
                 </div>
                 <nav class="public-nav" aria-label="Navigasi publik">
-                    <a href="{{ route('publik') }}">Beranda</a>
-                    <a href="{{ route('login') }}">Masuk bendahara</a>
+                    @if ($menuPublik->isNotEmpty())
+                        @foreach ($menuPublik as $menu)
+                            <a href="{{ $menuLayanan->href($menu) }}" @if ($menu->target === '_blank') target="_blank" rel="noopener" @endif>{{ $menu->judul }}</a>
+                        @endforeach
+                    @else
+                        <a href="{{ route('publik') }}">Beranda</a>
+                        <a href="{{ route('login') }}">Masuk bendahara</a>
+                    @endif
                 </nav>
             </div>
         </header>
