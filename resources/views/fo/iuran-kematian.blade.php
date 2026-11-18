@@ -24,14 +24,14 @@
                 <p class="page-subtitle mt-1">Daftar RT yang belum menyetor iuran kematian pada periode terpilih.</p>
             </div>
 
-            <form method="GET" action="{{ route('iuran-kematian') }}" class="card mb-4">
+            <form method="GET" action="{{ route('iuran-kematian') }}" class="card mb-4" id="formFilterIuran">
                 <div class="card-body">
                     <div class="row g-3 align-items-end">
                         <div class="col-6 col-md-3">
                             <label class="form-label-app" for="filterMinggu">Minggu ke</label>
                             <select class="form-select" id="filterMinggu" name="minggu">
                                 <option value="0" @selected($filter['minggu'] === 0)>Semua minggu</option>
-                                @foreach (range(1, 5) as $minggu)
+                                @foreach (range(1, $jumlahMinggu) as $minggu)
                                     <option value="{{ $minggu }}" @selected($filter['minggu'] === $minggu)>
                                         Minggu {{ $minggu }}
                                     </option>
@@ -64,6 +64,10 @@
                             </button>
                         </div>
                     </div>
+
+                    @if ($peringatanMinggu)
+                        <div class="alert alert-warning py-2 mt-3 mb-0">{{ $peringatanMinggu }}</div>
+                    @endif
                 </div>
             </form>
 
@@ -90,7 +94,7 @@
                     <div class="card h-100">
                         <div class="card-body d-flex flex-column gap-1">
                             <span class="stat-label">Belum setor</span>
-                            <span class="stat-value is-out">{{ $belumSetor->count() }}</span>
+                            <span class="stat-value is-out">{{ $jumlahBelumSetor }}</span>
                             <span class="stat-sub">{{ $labelPeriode }}</span>
                         </div>
                     </div>
@@ -100,7 +104,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline gap-2 mb-3">
-                        <h2 class="section-title">RT belum setor iuran kematian</h2>
+                        <h2 class="section-title">Status iuran kematian RT</h2>
                         <span class="hint">{{ $labelPeriode }}</span>
                     </div>
 
@@ -112,22 +116,39 @@
                                     <th>RT</th>
                                     <th>Nama Penarik</th>
                                     <th class="num">Jumlah KK</th>
+                                    <th class="num">Nominal Setor</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($belumSetor as $rt)
+                                @forelse ($daftarIuran as $baris)
                                     <tr>
-                                        <td>{{ $rt->rw?->nama ?? '-' }}</td>
-                                        <td>RT {{ $rt->nomor }}</td>
-                                        <td>{{ $rt->nama_penarik ?: '-' }}</td>
-                                        <td class="num">{{ $rt->jumlah_kk }}</td>
-                                        <td><span class="badge-soft badge-neutral">Belum setor</span></td>
+                                        <td>{{ $baris['rw'] }}</td>
+                                        <td>RT {{ $baris['rt'] }}</td>
+                                        <td>{{ $baris['penarik'] }}</td>
+                                        <td class="num">{{ $baris['jumlah_kk'] }}</td>
+                                        <td class="num">
+                                            @if ($baris['nominal'] > 0)
+                                                Rp {{ number_format($baris['nominal'], 0, ',', '.') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($baris['status'] === 'lunas')
+                                                <span class="badge-soft badge-in">Lunas</span>
+                                            @elseif ($baris['status'] === 'sebagian')
+                                                <span class="badge-soft badge-warn">
+                                                    Sebagian ({{ $baris['total_kk'] }}/{{ $baris['jumlah_kk'] }} KK)
+                                                </span>
+                                            @else
+                                                <span class="badge-soft badge-out">Belum setor</span>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center hint py-4">Semua RT sudah menyetor iuran
-                                            kematian pada periode ini.</td>
+                                        <td colspan="6" class="text-center hint py-4">Belum ada data RT.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -143,6 +164,43 @@
         </main>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+        (function () {
+            const form = document.getElementById('formFilterIuran');
+            const bulan = document.getElementById('filterBulan');
+            const tahun = document.getElementById('filterTahun');
+            const minggu = document.getElementById('filterMinggu');
+            if (!form || !bulan || !tahun || !minggu) return;
+
+            function maksMinggu() {
+                const hari = new Date(parseInt(tahun.value, 10), parseInt(bulan.value, 10), 0).getDate();
+                return Math.ceil(hari / 7);
+            }
+
+            function perbaruiMinggu() {
+                const maks = maksMinggu();
+                const terpilih = parseInt(minggu.value, 10);
+
+                minggu.innerHTML = '';
+                const semua = document.createElement('option');
+                semua.value = '0';
+                semua.textContent = 'Semua minggu';
+                minggu.appendChild(semua);
+
+                for (let i = 1; i <= maks; i++) {
+                    const opsi = document.createElement('option');
+                    opsi.value = String(i);
+                    opsi.textContent = 'Minggu ' + i;
+                    minggu.appendChild(opsi);
+                }
+
+                minggu.value = terpilih >= 1 && terpilih <= maks ? String(terpilih) : '0';
+            }
+
+            bulan.addEventListener('change', perbaruiMinggu);
+            tahun.addEventListener('change', perbaruiMinggu);
+        })();
+        </script>
     </body>
 
 </html>

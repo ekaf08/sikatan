@@ -40,14 +40,17 @@
                         <div class="card h-100">
                             <div class="card-body d-flex flex-column gap-1">
                                 <span class="stat-label">{{ $pos->nama }}</span>
-                                <span class="stat-value">Rp{{ number_format((float) $pos->saldo_terkini, 0, ',', '.') }}</span>
+                                <span
+                                    class="stat-value">Rp{{ number_format((float) $pos->saldo_terkini, 0, ',', '.') }}</span>
                                 <span class="stat-sub">Saldo terkini pos dana</span>
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="col-12">
-                        <div class="card"><div class="card-body hint">Belum ada data pos dana.</div></div>
+                        <div class="card">
+                            <div class="card-body hint">Belum ada data pos dana.</div>
+                        </div>
                     </div>
                 @endforelse
             </div>
@@ -80,35 +83,14 @@
                             <button class="btn btn-brand flex-fill" type="submit">
                                 <i class="bi bi-funnel"></i>Terapkan
                             </button>
-                            <a class="btn btn-outline-brand" href="{{ route('publik') }}#pemasukan" title="Reset filter">
+                            <a class="btn btn-outline-brand" href="{{ route('publik') }}#pemasukan"
+                                title="Reset filter">
                                 <i class="bi bi-arrow-counterclockwise"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </form>
-
-            <div class="row g-4 mb-4" id="pemasukan">
-                <div class="col-12 col-xl-6">
-                    @include('fo.partials.transaksi-table', [
-                        'id' => 'tabelPemasukanPublik',
-                        'judul' => 'Pemasukan terbaru',
-                        'hint' => $filter['label'],
-                        'items' => $pemasukanTerbaru,
-                        'kosong' => 'Belum ada data pemasukan tercatat pada periode ini.',
-                    ])
-                </div>
-
-                <div class="col-12 col-xl-6" id="pengeluaran">
-                    @include('fo.partials.transaksi-table', [
-                        'id' => 'tabelPengeluaranPublik',
-                        'judul' => 'Pengeluaran terbaru',
-                        'hint' => $filter['label'],
-                        'items' => $pengeluaranTerbaru,
-                        'kosong' => 'Belum ada data pengeluaran tercatat pada periode ini.',
-                    ])
-                </div>
-            </div>
 
             <div class="row g-4 mb-4" id="grafik">
                 <div class="col-12 col-xl-6">
@@ -132,11 +114,36 @@
                 </div>
             </div>
 
+            <div class="row g-4 mb-4" id="pemasukan">
+                <div class="col-12 col-xl-6">
+                    @include('fo.partials.transaksi-table', [
+                        'id' => 'tabelPemasukanPublik',
+                        'judul' => 'Pemasukan terbaru',
+                        'hint' => $filter['label'],
+                        'items' => $pemasukanTerbaru,
+                        'kosong' => 'Belum ada data pemasukan tercatat pada periode ini.',
+                    ])
+                </div>
+
+                <div class="col-12 col-xl-6" id="pengeluaran">
+                    @include('fo.partials.transaksi-table', [
+                        'id' => 'tabelPengeluaranPublik',
+                        'judul' => 'Pengeluaran terbaru',
+                        'hint' => $filter['label'],
+                        'items' => $pengeluaranTerbaru,
+                        'kosong' => 'Belum ada data pengeluaran tercatat pada periode ini.',
+                    ])
+                </div>
+            </div>
+
             <div class="soft-panel p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div style="max-width:720px">
-                    <h2 class="section-title" style="font-size:16px;color:#17443a">Laporan terbuka, perubahan tercatat</h2>
+                    <h2 class="section-title" style="font-size:16px;color:#17443a">Laporan terbuka, perubahan tercatat
+                    </h2>
                     <p class="mt-1" style="font-size:14px;line-height:1.6;color:#3f4a44">
-                        Data di halaman ini bersumber dari pencatatan kas kampung. Transaksi yang salah tidak dihapus, tetapi ditandai batal beserta alasannya. Informasi sensitif dan lampiran yang disembunyikan tidak ditampilkan kepada publik.
+                        Data di halaman ini bersumber dari pencatatan kas kampung. Transaksi yang salah tidak dihapus,
+                        tetapi ditandai batal beserta alasannya. Informasi sensitif dan lampiran yang disembunyikan
+                        tidak ditampilkan kepada publik.
                     </p>
                 </div>
                 <a class="btn btn-brand" href="#pengeluaran">Lihat pengeluaran</a>
@@ -155,52 +162,52 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
         <script>
-        (function () {
-            if (!window.flatpickr) return;
-            if (window.flatpickr.l10ns && window.flatpickr.l10ns.id) {
-                window.flatpickr.localize(window.flatpickr.l10ns.id);
-            }
-            document.querySelectorAll('[data-flatpickr]').forEach(function (el) {
-                window.flatpickr(el, {
-                    dateFormat: 'Y-m-d',
-                    allowInput: true,
-                    disableMobile: true
+            (function() {
+                if (!window.flatpickr) return;
+                if (window.flatpickr.l10ns && window.flatpickr.l10ns.id) {
+                    window.flatpickr.localize(window.flatpickr.l10ns.id);
+                }
+                document.querySelectorAll('[data-flatpickr]').forEach(function(el) {
+                    window.flatpickr(el, {
+                        dateFormat: 'Y-m-d',
+                        allowInput: true,
+                        disableMobile: true
+                    });
                 });
-            });
-        })();
+            })();
         </script>
         <script>
-        (function () {
-            if (typeof window.jQuery === 'undefined' || !window.jQuery.fn.DataTable) return;
+            (function() {
+                if (typeof window.jQuery === 'undefined' || !window.jQuery.fn.DataTable) return;
 
-            const $ = window.jQuery;
-            const bahasaDataTables = {
-                search: 'Cari:',
-                info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
-                infoEmpty: 'Tidak ada data',
-                infoFiltered: '(difilter dari _MAX_ total data)',
-                zeroRecords: 'Data tidak ditemukan',
-                paginate: {
-                    first: 'Awal',
-                    last: 'Akhir',
-                    next: 'Lanjut',
-                    previous: 'Kembali'
-                }
-            };
-            const domDataTables = "<'row align-items-center mb-3'<'col-sm-12 d-flex justify-content-end'f>>" +
-                "<'row'<'col-sm-12'tr>>" +
-                "<'row align-items-center mt-3'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>";
+                const $ = window.jQuery;
+                const bahasaDataTables = {
+                    search: 'Cari:',
+                    info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                    infoEmpty: 'Tidak ada data',
+                    infoFiltered: '(difilter dari _MAX_ total data)',
+                    zeroRecords: 'Data tidak ditemukan',
+                    paginate: {
+                        first: 'Awal',
+                        last: 'Akhir',
+                        next: 'Lanjut',
+                        previous: 'Kembali'
+                    }
+                };
+                const domDataTables = "<'row align-items-center mb-3'<'col-sm-12 d-flex justify-content-end'f>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row align-items-center mt-3'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>";
 
-            $('table[data-datatables]').each(function () {
-                $(this).DataTable({
-                    dom: domDataTables,
-                    language: bahasaDataTables,
-                    pageLength: 10,
-                    ordering: false,
-                    autoWidth: false
+                $('table[data-datatables]').each(function() {
+                    $(this).DataTable({
+                        dom: domDataTables,
+                        language: bahasaDataTables,
+                        pageLength: 10,
+                        ordering: false,
+                        autoWidth: false
+                    });
                 });
-            });
-        })();
+            })();
         </script>
     </body>
 
