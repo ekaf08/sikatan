@@ -24,10 +24,9 @@
 
                 <nav class="public-nav" aria-label="Navigasi publik">
                     <a class="active" href="{{ route('publik') }}" aria-current="page">Beranda</a>
-                    {{-- TODO: halaman publik Pengeluaran / Pemasukan / Laporan --}}
-                    <a href="#">Pengeluaran</a>
-                    <a href="#">Pemasukan</a>
-                    <a href="#">Laporan</a>
+                    <a href="#pengeluaran">Pengeluaran</a>
+                    <a href="#pemasukan">Pemasukan</a>
+                    <a href="#donasi">Donasi</a>
                     <a href="{{ route('login') }}">Masuk bendahara</a>
                 </nav>
             </div>
@@ -37,130 +36,67 @@
             <section class="d-flex flex-wrap align-items-end justify-content-between gap-4 mb-4">
                 <div>
                     <span class="lbl mb-2">Total saldo kas desa</span>
-                    <h1 class="saldo-value">Rp64.645.000</h1>
-                    <p class="page-subtitle mt-1">Diperbarui 12 November 2026, 08.30 WIB. Data contoh.</p>
-                </div>
-
-                <div class="d-flex flex-wrap gap-3">
-                    <div>
-                        <label class="form-label-app" for="publikRw">RW</label>
-                        <select class="form-select" id="publikRw" style="min-width:150px">
-                            <option>Semua RW</option>
-                            <option>RW 01</option>
-                            <option>RW 02</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label-app" for="publikRt">RT</label>
-                        <select class="form-select" id="publikRt" style="min-width:150px">
-                            <option>Semua RT</option>
-                            <option>RT 01</option>
-                            <option>RT 02</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label-app" for="publikPeriode">Periode</label>
-                        <select class="form-select" id="publikPeriode" style="min-width:170px">
-                            <option>Triwulan 4 2026</option>
-                            <option>Triwulan 3 2026</option>
-                            <option>Tahun 2026</option>
-                        </select>
-                    </div>
+                    <h1 class="saldo-value">Rp{{ number_format($totalSaldo, 0, ',', '.') }}</h1>
+                    <p class="page-subtitle mt-1">
+                        @if ($terakhirDiperbarui)
+                            Diperbarui {{ $terakhirDiperbarui }} WIB. Data dari pencatatan kas.
+                        @else
+                            Belum ada data transaksi tercatat.
+                        @endif
+                    </p>
                 </div>
             </section>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-4">
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column gap-1">
-                            <span class="stat-label">Kas kematian</span>
-                            <span class="stat-value">Rp35.240.000</span>
-                            <span class="stat-sub">Iuran mingguan warga untuk santunan</span>
+                @forelse ($posDana as $pos)
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body d-flex flex-column gap-1">
+                                <span class="stat-label">{{ $pos->nama }}</span>
+                                <span class="stat-value">Rp{{ number_format((float) $pos->saldo_terkini, 0, ',', '.') }}</span>
+                                <span class="stat-sub">Saldo terkini pos dana</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column gap-1">
-                            <span class="stat-label">Kas masjid</span>
-                            <span class="stat-value">Rp8.910.000</span>
-                            <span class="stat-sub">Uang kotak Jumat dan donasi</span>
-                        </div>
+                @empty
+                    <div class="col-12">
+                        <div class="card"><div class="card-body hint">Belum ada data pos dana.</div></div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column gap-1">
-                            <span class="stat-label">Kas sedekah bumi</span>
-                            <span class="stat-value">Rp18.350.000</span>
-                            <span class="stat-sub">Anggaran acara tahun ini: Rp33.000.000</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body d-flex flex-column gap-1">
-                            <span class="stat-label">Kas lain-lain</span>
-                            <span class="stat-value">Rp2.145.000</span>
-                            <span class="stat-sub">Perawatan kecil dan pemasukan lain</span>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
             </div>
 
-            <div class="row g-4 mb-4">
+            <div class="row g-4 mb-4" id="pemasukan">
                 <div class="col-12 col-xl-5">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline gap-2 mb-3">
                                 <h2 class="section-title">Pemasukan per bulan</h2>
-                                <span class="hint">dalam jutaan rupiah</span>
+                                <span class="hint">6 bulan terakhir (juta/rb)</span>
                             </div>
 
                             <div class="chart">
-                                <div class="chart-col">
-                                    <span>4,1</span>
-                                    <div class="chart-bar" style="height:123px"></div>
-                                </div>
-                                <div class="chart-col">
-                                    <span>3,8</span>
-                                    <div class="chart-bar" style="height:114px"></div>
-                                </div>
-                                <div class="chart-col">
-                                    <span>4,4</span>
-                                    <div class="chart-bar" style="height:132px"></div>
-                                </div>
-                                <div class="chart-col">
-                                    <span>3,9</span>
-                                    <div class="chart-bar" style="height:117px"></div>
-                                </div>
-                                <div class="chart-col">
-                                    <span>4,6</span>
-                                    <div class="chart-bar" style="height:138px"></div>
-                                </div>
-                                <div class="chart-col">
-                                    <span>2,7</span>
-                                    <div class="chart-bar is-current" style="height:81px"></div>
-                                </div>
+                                @foreach ($pemasukanBulanan as $item)
+                                    <div class="chart-col">
+                                        <span>{{ $item['tampil'] }}</span>
+                                        <div class="chart-bar {{ $item['berjalan'] ? 'is-current' : '' }}" style="height:{{ $item['tinggi'] }}px" title="Rp{{ number_format($item['total'], 0, ',', '.') }}"></div>
+                                    </div>
+                                @endforeach
                             </div>
                             <div class="chart-labels mt-2">
-                                <span>Jun</span>
-                                <span>Jul</span>
-                                <span>Agu</span>
-                                <span>Sep</span>
-                                <span>Okt</span>
-                                <span>Nov (berjalan)</span>
+                                @foreach ($pemasukanBulanan as $item)
+                                    <span>{{ $item['label'] }}{{ $item['berjalan'] ? ' (berjalan)' : '' }}</span>
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-xl-7">
+                <div class="col-12 col-xl-7" id="pengeluaran">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-baseline gap-2 mb-2">
                                 <h2 class="section-title">Pengeluaran terbaru</h2>
-                                <a class="link-app" href="#">Lihat semua</a>
+                                <span class="hint">Transparansi pengeluaran kas</span>
                             </div>
                             <div class="table-responsive">
                                 <table class="table-app">
@@ -173,43 +109,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>09 Nov</td>
-                                            <td>Kas Lain-lain</td>
-                                            <td>Pembelian alat kebersihan</td>
-                                            <td class="num">Rp125.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>06 Nov</td>
-                                            <td>Kas Sedekah Bumi</td>
-                                            <td>Uang muka konsumsi sedekah bumi</td>
-                                            <td class="num">Rp4.500.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>05 Nov</td>
-                                            <td>Kas Sedekah Bumi</td>
-                                            <td>Uang muka sewa tenda dan pengeras suara</td>
-                                            <td class="num">Rp2.500.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>30 Okt</td>
-                                            <td>Kas Masjid</td>
-                                            <td>Ganti kran tempat wudu yang rusak</td>
-                                            <td class="num">Rp350.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>28 Okt</td>
-                                            <td>Kas Lain-lain</td>
-                                            <td>Ganti 4 lampu jalan di RW 01</td>
-                                            <td class="num">Rp480.000</td>
-                                        </tr>
-                                        <tr>
-                                            <td>24 Okt</td>
-                                            <td>Kas Kematian</td>
-                                            <td>Santunan kematian warga, dengan tambahan untuk kebutuhan pendidikan ahli
-                                                waris</td>
-                                            <td class="num">Rp3.500.000</td>
-                                        </tr>
+                                        @forelse ($pengeluaranTerbaru as $item)
+                                            <tr>
+                                                <td style="white-space:nowrap">{{ $item['tanggal'] }}</td>
+                                                <td>{{ $item['pos'] }}</td>
+                                                <td>
+                                                    <div>{{ $item['keterangan'] }}</div>
+                                                    @if (!empty($item['lampiran']))
+                                                        <div class="d-flex flex-wrap gap-1 mt-1">
+                                                            @foreach (array_slice($item['lampiran'], 0, 3) as $url)
+                                                                <a href="{{ $url }}" target="_blank" rel="noopener" title="Lihat bukti">
+                                                                    <img src="{{ $url }}" alt="Bukti" style="width:36px;height:36px;object-fit:cover;border-radius:.35rem;border:1px solid rgba(0,0,0,.12)">
+                                                                </a>
+                                                            @endforeach
+                                                            @if (count($item['lampiran']) > 3)
+                                                                <span class="hint">+{{ count($item['lampiran']) - 3 }}</span>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                                <td class="num">Rp{{ number_format($item['nominal'], 0, ',', '.') }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center hint py-4">Belum ada data pengeluaran tercatat.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
@@ -274,18 +199,16 @@
 
             <div class="soft-panel p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
                 <div style="max-width:720px">
-                    <h2 class="section-title" style="font-size:16px;color:#17443a">Laporan terbuka, perubahan tercatat
-                    </h2>
+                    <h2 class="section-title" style="font-size:16px;color:#17443a">Laporan terbuka, perubahan tercatat</h2>
                     <p class="mt-1" style="font-size:14px;line-height:1.6;color:#3f4a44">
-                        Transaksi yang salah tidak dihapus, tetapi ditandai Batal beserta alasannya. Untuk menjaga
-                        privasi keluarga yang berduka, nama penerima santunan dan foto nota tertentu tidak ditampilkan.
+                        Data di halaman ini bersumber dari pencatatan kas. Transaksi yang salah tidak dihapus, tetapi ditandai batal beserta alasannya. Informasi sensitif dan lampiran yang disembunyikan tidak ditampilkan kepada publik.
                     </p>
                 </div>
-                <a class="btn btn-brand" href="#">Lihat pengeluaran</a>
+                <a class="btn btn-brand" href="#pengeluaran">Lihat pengeluaran</a>
             </div>
 
             <footer class="d-flex flex-wrap justify-content-between gap-2 py-4 mt-2 hint">
-                <span>&copy; 2026 Kas Desa Babatan. Data contoh untuk template.</span>
+                <span>&copy; {{ date('Y') }} Kas Desa Babatan.</span>
                 <span>Transparan, rapi, dan dapat diaudit.</span>
             </footer>
         </main>
