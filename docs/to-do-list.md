@@ -23,6 +23,7 @@ Dokumen kerja terpadu agar pekerjaan dapat dilanjutkan tanpa membaca ulang konte
 - [x] Layout **admin** (`resources/views/layouts/sidebar.blade.php`) & **publik** (`resources/views/fo/home.blade.php`, `resources/views/fo/donasi-selesai.blade.php`) membaca menu dari DB dengan fallback hardcode.
 - [x] Rebranding UI utama: judul/brand/layout publik & admin, footer, label saldo, dan judul halaman di `resources/views` (termasuk auth/master/laporan/cetak) ke "Sistem Kampung Babatan"; `.env.example` `APP_NAME` diperbarui.
 - [x] Beranda publik (`fo.home`): filter RW/RT/periode dihapus, data dari DB via `BerandaPublikController@index` + `SaldoDana` (saldo/pos, pemasukan 6 bulan, 30 pengeluaran terbaru aktif, keterangan publik & lampiran non-tersembunyi).
+- [x] Perbaikan UX sidebar: judul brand tidak terpotong (wrap), state collapsed diterapkan awal render + `sidebar-no-transition` agar tidak blink saat pindah menu.
 - [ ] Belum: modul pengumuman/kegiatan-lomba, halaman publik terpisah, paginasi/caching, rename aset `sikatan/*` & logo, set `APP_NAME` di `.env` produksi, tes/regresi lanjutan.
 
 ### 2026-11-16 - Midtrans & rekap pembayaran

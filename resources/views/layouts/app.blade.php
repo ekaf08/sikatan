@@ -4,6 +4,24 @@
     @include('layouts.style')
 
     <body>
+        <script>
+            (function () {
+                try {
+                    if (window.localStorage.getItem('sikatan.sidebar.collapsed') === '1'
+                        && window.matchMedia('(min-width: 992px)').matches) {
+                        document.body.classList.add('sidebar-collapsed');
+                    }
+                    document.body.classList.add('sidebar-no-transition');
+                    window.addEventListener('DOMContentLoaded', function () {
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () {
+                                document.body.classList.remove('sidebar-no-transition');
+                            });
+                        });
+                    });
+                } catch (e) {}
+            })();
+        </script>
         @include('layouts.sidebar')
 
         <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
