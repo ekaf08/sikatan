@@ -155,7 +155,7 @@ class LaporanController extends Controller
     {
         $filter = $this->filter($request);
 
-        return view('pages.laporan-cetak', [
+        return view('pages.cetak.laporan-cetak', [
             'data' => $this->laporan($filter),
             'isi' => $filter['isi'],
             'pengaturan' => $this->pengaturan(),

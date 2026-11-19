@@ -133,7 +133,7 @@ class TransaksiController extends Controller
 
     public function eksporPdf(Request $request): View
     {
-        return view('pages.transaksi-cetak', [
+        return view('pages.cetak.transaksi-cetak', [
             'data' => $this->dataEkspor($request),
             'filterLabel' => $this->ringkasanFilter($request),
             'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),

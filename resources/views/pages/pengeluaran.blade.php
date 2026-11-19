@@ -16,7 +16,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Total pengeluaran</span>
-                    <span class="stat-value is-out" id="statTotalPengeluaran">Rp{{ number_format($totalPengeluaran, 0, ',', '.') }}</span>
+                    <span class="stat-value is-out"
+                        id="statTotalPengeluaran">Rp{{ number_format($totalPengeluaran, 0, ',', '.') }}</span>
                     <span class="stat-sub">Seluruh transaksi aktif</span>
                 </div>
             </div>
@@ -25,7 +26,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Jumlah transaksi</span>
-                    <span class="stat-value" id="statJumlahTransaksi">{{ number_format($jumlahTransaksi, 0, ',', '.') }}</span>
+                    <span class="stat-value"
+                        id="statJumlahTransaksi">{{ number_format($jumlahTransaksi, 0, ',', '.') }}</span>
                     <span class="stat-sub">Pengeluaran aktif</span>
                 </div>
             </div>
@@ -34,7 +36,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Pengeluaran bulan ini</span>
-                    <span class="stat-value is-out" id="statBulanIni">Rp{{ number_format($pengeluaranBulanIni, 0, ',', '.') }}</span>
+                    <span class="stat-value is-out"
+                        id="statBulanIni">Rp{{ number_format($pengeluaranBulanIni, 0, ',', '.') }}</span>
                     <span class="stat-sub">{{ now()->locale('id')->translatedFormat('F Y') }}</span>
                 </div>
             </div>
@@ -54,7 +57,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <h2 class="section-title mb-0">Daftar pengeluaran</h2>
-                <div class="d-flex flex-wrap gap-2">
+                {{-- <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-outline-brand btn-sm" href="{{ route('pengeluaran.excel') }}">
                         <i class="bi bi-file-earmark-excel me-1"></i>Excel (CSV)
                     </a>
@@ -64,7 +67,7 @@
                     <button class="btn btn-brand" type="button" id="btnTambahKeluar">
                         <i class="bi bi-plus-lg"></i>Tambah pengeluaran
                     </button>
-                </div>
+                </div> --}}
             </div>
 
             <div class="table-responsive">
@@ -87,7 +90,8 @@
                 </table>
             </div>
 
-            <p class="hint mt-3">Nominal yang berbeda dari standar kategori wajib disertai alasan. Data yang dihapus disimpan sebagai arsip (soft delete).</p>
+            <p class="hint mt-3">Nominal yang berbeda dari standar kategori wajib disertai alasan. Data yang dihapus
+                disimpan sebagai arsip (soft delete).</p>
         </div>
     </div>
 
@@ -149,7 +153,8 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <span class="hint" id="keluarAnggaranHint">Pilih acara agar item anggaran bisa dipilih.</span>
+                                <span class="hint" id="keluarAnggaranHint">Pilih acara agar item anggaran bisa
+                                    dipilih.</span>
                                 <div class="invalid-feedback" data-error="anggaran_acara_id"></div>
                             </div>
                             <div class="col-12 col-md-6">
@@ -174,14 +179,16 @@
                         </div>
 
                         <div>
-                            <label class="form-label-app" for="keluarCatatanPublik">Catatan publik (tampil ke warga)</label>
+                            <label class="form-label-app" for="keluarCatatanPublik">Catatan publik (tampil ke
+                                warga)</label>
                             <input class="form-control" id="keluarCatatanPublik" name="catatan_publik" type="text"
                                 placeholder="Contoh: Ganti kran tempat wudu yang rusak">
                             <div class="invalid-feedback" data-error="catatan_publik"></div>
                         </div>
 
                         <div>
-                            <label class="form-label-app" for="keluarCatatanInternal">Catatan internal (hanya bendahara dan admin)</label>
+                            <label class="form-label-app" for="keluarCatatanInternal">Catatan internal (hanya bendahara
+                                dan admin)</label>
                             <textarea class="form-control" id="keluarCatatanInternal" name="catatan_internal" rows="3"
                                 placeholder="Catatan yang tidak tampil ke publik"></textarea>
                             <div class="invalid-feedback" data-error="catatan_internal"></div>
@@ -194,18 +201,21 @@
 
                         <div>
                             <label class="form-label-app" for="keluarFoto">Foto nota atau bukti</label>
-                            <input class="form-control" id="keluarFoto" name="lampiran[]" type="file" accept="image/*" multiple>
-                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa foto.</span>
+                            <input class="form-control" id="keluarFoto" name="lampiran[]" type="file"
+                                accept="image/*" multiple>
+                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa
+                                foto.</span>
                             <div class="invalid-feedback" data-error="lampiran"></div>
                             <div class="d-flex flex-wrap gap-2 mt-2" id="previewLampiranBaru"></div>
                         </div>
 
                         <div class="form-check d-flex align-items-start gap-2">
-                            <input class="form-check-input" id="keluarSembunyikan" name="sembunyikan_lampiran" type="checkbox"
-                                value="1">
+                            <input class="form-check-input" id="keluarSembunyikan" name="sembunyikan_lampiran"
+                                type="checkbox" value="1">
                             <label class="form-check-label" for="keluarSembunyikan">
                                 <strong>Sembunyikan foto nota dari halaman publik</strong>
-                                <span class="hint d-block">Disarankan untuk santunan. Nominal dan kategori tetap tampil.</span>
+                                <span class="hint d-block">Disarankan untuk santunan. Nominal dan kategori tetap
+                                    tampil.</span>
                             </label>
                         </div>
                     </div>
@@ -446,7 +456,8 @@
                     kotak.className = 'position-relative';
                     kotak.innerHTML = '<img src="' + item.url +
                         '" alt="pratinjau" style="width:90px;height:90px;object-fit:cover;border-radius:.5rem;border:1px solid rgba(0,0,0,.15)">' +
-                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-baru="' + index +
+                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-baru="' +
+                        index +
                         '" style="top:-8px;right:-8px;width:24px;height:24px;padding:0;line-height:1;border-radius:50%">&times;</button>';
                     wadah.appendChild(kotak);
                 });
@@ -471,10 +482,12 @@
                 tampil.forEach(function(item) {
                     const kotak = document.createElement('div');
                     kotak.className = 'position-relative';
-                    kotak.innerHTML = '<a href="' + item.url + '" target="_blank" rel="noopener"><img src="' + item
+                    kotak.innerHTML = '<a href="' + item.url +
+                        '" target="_blank" rel="noopener"><img src="' + item
                         .url +
                         '" alt="lampiran" style="width:90px;height:90px;object-fit:cover;border-radius:.5rem;border:1px solid rgba(0,0,0,.15)"></a>' +
-                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-lama="' + item
+                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-lama="' +
+                        item
                         .id +
                         '" style="top:-8px;right:-8px;width:24px;height:24px;padding:0;line-height:1;border-radius:50%">&times;</button>';
                     wadah.appendChild(kotak);
@@ -563,7 +576,8 @@
                 }
             };
 
-            const domDataTables = "<'row align-items-center mb-3'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-end'f>>" +
+            const domDataTables =
+                "<'row align-items-center mb-3'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-end'f>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row align-items-center mt-3'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>";
 

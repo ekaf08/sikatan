@@ -257,7 +257,7 @@ class PengeluaranController extends Controller
 
     public function eksporPdf(): View
     {
-        return view('pages.pengeluaran-cetak', [
+        return view('pages.cetak.pengeluaran-cetak', [
             'rows' => $this->queryEkspor()->get(),
             'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),
         ]);

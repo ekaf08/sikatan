@@ -16,7 +16,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Total pemasukan</span>
-                    <span class="stat-value is-in" id="statTotalPemasukan">Rp{{ number_format($totalPemasukan, 0, ',', '.') }}</span>
+                    <span class="stat-value is-in"
+                        id="statTotalPemasukan">Rp{{ number_format($totalPemasukan, 0, ',', '.') }}</span>
                     <span class="stat-sub">Seluruh transaksi aktif</span>
                 </div>
             </div>
@@ -25,7 +26,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Jumlah transaksi</span>
-                    <span class="stat-value" id="statJumlahTransaksi">{{ number_format($jumlahTransaksi, 0, ',', '.') }}</span>
+                    <span class="stat-value"
+                        id="statJumlahTransaksi">{{ number_format($jumlahTransaksi, 0, ',', '.') }}</span>
                     <span class="stat-sub">Pemasukan aktif</span>
                 </div>
             </div>
@@ -34,7 +36,8 @@
             <div class="card stat-card h-100">
                 <div class="card-body">
                     <span class="stat-label">Pemasukan bulan ini</span>
-                    <span class="stat-value is-in" id="statBulanIni">Rp{{ number_format($pemasukanBulanIni, 0, ',', '.') }}</span>
+                    <span class="stat-value is-in"
+                        id="statBulanIni">Rp{{ number_format($pemasukanBulanIni, 0, ',', '.') }}</span>
                     <span class="stat-sub">{{ now()->locale('id')->translatedFormat('F Y') }}</span>
                 </div>
             </div>
@@ -53,12 +56,14 @@
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="section-title mb-2">Formulir pemasukan</h2>
-            <p class="hint mb-3">Pilih tab sesuai jenis pemasukan. Tab donasi dan lain-lain dapat disertai lampiran foto.</p>
+            <p class="hint mb-3">Pilih tab sesuai jenis pemasukan. Tab donasi dan lain-lain dapat disertai lampiran foto.
+            </p>
 
             <ul class="nav nav-pills flex-wrap gap-2 mb-4" id="tabsPemasukan" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="tab-app active" id="tab-setoran" data-bs-toggle="pill" data-bs-target="#panel-setoran"
-                        data-tipe="setoran" type="button" role="tab" aria-controls="panel-setoran" aria-selected="true">
+                        data-tipe="setoran" type="button" role="tab" aria-controls="panel-setoran"
+                        aria-selected="true">
                         Setoran iuran kematian
                     </button>
                 </li>
@@ -103,7 +108,8 @@
                                     <option value="">Pilih RT</option>
                                     @foreach ($daftarRt as $rt)
                                         <option value="{{ $rt->id }}" data-jumlah="{{ $rt->jumlah_kk }}">
-                                            {{ $rt->rw?->nama ?? '-' }} &middot; RT {{ $rt->nomor }} ({{ $rt->jumlah_kk }} KK)
+                                            {{ $rt->rw?->nama ?? '-' }} &middot; RT {{ $rt->nomor }}
+                                            ({{ $rt->jumlah_kk }} KK)
                                         </option>
                                     @endforeach
                                 </select>
@@ -112,8 +118,8 @@
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label-app" for="setoranKk">Jumlah KK yang membayar</label>
-                                <input class="form-control" id="setoranKk" name="jumlah_kk_bayar" type="number" min="1"
-                                    step="1" placeholder="0">
+                                <input class="form-control" id="setoranKk" name="jumlah_kk_bayar" type="number"
+                                    min="1" step="1" placeholder="0">
                                 <div class="invalid-feedback" data-error="jumlah_kk_bayar"></div>
                             </div>
                             <div class="col-12 col-md-4">
@@ -130,14 +136,14 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="setoranCatatanPublik">Catatan publik</label>
-                                <input class="form-control" id="setoranCatatanPublik" name="catatan_publik" type="text"
-                                    placeholder="Contoh: Setoran iuran kematian">
+                                <input class="form-control" id="setoranCatatanPublik" name="catatan_publik"
+                                    type="text" placeholder="Contoh: Setoran iuran kematian">
                                 <div class="invalid-feedback" data-error="catatan_publik"></div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="setoranCatatanInternal">Catatan internal</label>
-                                <input class="form-control" id="setoranCatatanInternal" name="catatan_internal" type="text"
-                                    placeholder="Contoh: 3 KK menyusul minggu depan">
+                                <input class="form-control" id="setoranCatatanInternal" name="catatan_internal"
+                                    type="text" placeholder="Contoh: 3 KK menyusul minggu depan">
                                 <div class="invalid-feedback" data-error="catatan_internal"></div>
                             </div>
                         </div>
@@ -230,8 +236,8 @@
                             </div>
                             <div class="col-12">
                                 <div class="form-check">
-                                    <input class="form-check-input" id="donasiAnonim" name="donatur_anonim" type="checkbox"
-                                        value="1">
+                                    <input class="form-check-input" id="donasiAnonim" name="donatur_anonim"
+                                        type="checkbox" value="1">
                                     <label class="form-check-label" for="donasiAnonim">
                                         Tampilkan sebagai <strong>Hamba Allah</strong> di halaman publik
                                     </label>
@@ -239,14 +245,14 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="donasiCatatanPublik">Catatan publik</label>
-                                <input class="form-control" id="donasiCatatanPublik" name="catatan_publik" type="text"
-                                    placeholder="Contoh: Donasi untuk perawatan masjid">
+                                <input class="form-control" id="donasiCatatanPublik" name="catatan_publik"
+                                    type="text" placeholder="Contoh: Donasi untuk perawatan masjid">
                                 <div class="invalid-feedback" data-error="catatan_publik"></div>
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="donasiCatatanInternal">Catatan internal</label>
-                                <input class="form-control" id="donasiCatatanInternal" name="catatan_internal" type="text"
-                                    placeholder="Catatan yang tidak tampil ke publik">
+                                <input class="form-control" id="donasiCatatanInternal" name="catatan_internal"
+                                    type="text" placeholder="Catatan yang tidak tampil ke publik">
                                 <div class="invalid-feedback" data-error="catatan_internal"></div>
                             </div>
                         </div>
@@ -258,9 +264,10 @@
 
                         <div class="mt-3">
                             <label class="form-label-app" for="donasiFoto">Lampiran foto</label>
-                            <input class="form-control" id="donasiFoto" name="lampiran[]" type="file" accept="image/*"
-                                multiple data-input-foto>
-                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa foto.</span>
+                            <input class="form-control" id="donasiFoto" name="lampiran[]" type="file"
+                                accept="image/*" multiple data-input-foto>
+                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa
+                                foto.</span>
                             <div class="invalid-feedback" data-error="lampiran"></div>
                             <div class="d-flex flex-wrap gap-2 mt-2" data-preview-baru></div>
                         </div>
@@ -322,8 +329,8 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label-app" for="lainCatatanInternal">Catatan internal</label>
-                                <input class="form-control" id="lainCatatanInternal" name="catatan_internal" type="text"
-                                    placeholder="Catatan yang tidak tampil ke publik">
+                                <input class="form-control" id="lainCatatanInternal" name="catatan_internal"
+                                    type="text" placeholder="Catatan yang tidak tampil ke publik">
                                 <div class="invalid-feedback" data-error="catatan_internal"></div>
                             </div>
                         </div>
@@ -335,9 +342,10 @@
 
                         <div class="mt-3">
                             <label class="form-label-app" for="lainFoto">Lampiran foto</label>
-                            <input class="form-control" id="lainFoto" name="lampiran[]" type="file" accept="image/*"
-                                multiple data-input-foto>
-                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa foto.</span>
+                            <input class="form-control" id="lainFoto" name="lampiran[]" type="file"
+                                accept="image/*" multiple data-input-foto>
+                            <span class="hint">Otomatis dikompres maksimal 500 KB (jpg, png, webp). Bisa pilih beberapa
+                                foto.</span>
                             <div class="invalid-feedback" data-error="lampiran"></div>
                             <div class="d-flex flex-wrap gap-2 mt-2" data-preview-baru></div>
                         </div>
@@ -358,14 +366,14 @@
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <h2 class="section-title mb-0">Daftar pemasukan</h2>
-                <div class="d-flex flex-wrap gap-2">
+                {{-- <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-outline-brand btn-sm" href="{{ route('pemasukan.excel') }}">
                         <i class="bi bi-file-earmark-excel me-1"></i>Excel (CSV)
                     </a>
                     <a class="btn btn-outline-brand btn-sm" href="{{ route('pemasukan.pdf') }}" target="_blank" rel="noopener">
                         <i class="bi bi-file-earmark-pdf me-1"></i>PDF
                     </a>
-                </div>
+                </div> --}}
             </div>
 
             <div class="table-responsive">
@@ -388,7 +396,8 @@
                 </table>
             </div>
 
-            <p class="hint mt-3">Data yang dihapus disimpan sebagai arsip (soft delete). Lampiran foto hanya tersedia untuk tab donasi dan lain-lain.</p>
+            <p class="hint mt-3">Data yang dihapus disimpan sebagai arsip (soft delete). Lampiran foto hanya tersedia untuk
+                tab donasi dan lain-lain.</p>
         </div>
     </div>
 @endsection
@@ -590,7 +599,8 @@
                     kotak.className = 'position-relative';
                     kotak.innerHTML = '<img src="' + item.url +
                         '" alt="pratinjau" style="width:90px;height:90px;object-fit:cover;border-radius:.5rem;border:1px solid rgba(0,0,0,.15)">' +
-                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-baru="' + index +
+                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-baru="' +
+                        index +
                         '" style="top:-8px;right:-8px;width:24px;height:24px;padding:0;line-height:1;border-radius:50%">&times;</button>';
                     wadah.appendChild(kotak);
                 });
@@ -620,10 +630,12 @@
                 tampil.forEach(function(item) {
                     const kotak = document.createElement('div');
                     kotak.className = 'position-relative';
-                    kotak.innerHTML = '<a href="' + item.url + '" target="_blank" rel="noopener"><img src="' + item
+                    kotak.innerHTML = '<a href="' + item.url +
+                        '" target="_blank" rel="noopener"><img src="' + item
                         .url +
                         '" alt="lampiran" style="width:90px;height:90px;object-fit:cover;border-radius:.5rem;border:1px solid rgba(0,0,0,.15)"></a>' +
-                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-lama="' + item
+                        '<button type="button" class="btn btn-sm btn-danger position-absolute" data-hapus-lama="' +
+                        item
                         .id +
                         '" style="top:-8px;right:-8px;width:24px;height:24px;padding:0;line-height:1;border-radius:50%">&times;</button>';
                     wadah.appendChild(kotak);
@@ -862,7 +874,8 @@
                 }
             };
 
-            const domDataTables = "<'row align-items-center mb-3'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-end'f>>" +
+            const domDataTables =
+                "<'row align-items-center mb-3'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6 d-flex justify-content-end'f>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row align-items-center mt-3'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>";
 
@@ -892,7 +905,8 @@
                         searchable: false,
                         render: function(data, type, row) {
                             if (row.tipe === 'donasi') {
-                                return '<span class="badge-soft badge-in">' + escapeHtml(data) + '</span>';
+                                return '<span class="badge-soft badge-in">' + escapeHtml(data) +
+                                    '</span>';
                             }
                             return escapeHtml(data);
                         }
@@ -972,9 +986,12 @@
                 editTipe = tipe;
 
                 form.querySelector('[name="tanggal"]').value = tombol.getAttribute('data-tanggal') || '';
-                form.querySelector('[name="nominal"]').value = formatRibuan(tombol.getAttribute('data-nominal'));
-                form.querySelector('[name="catatan_publik"]').value = tombol.getAttribute('data-catatan-publik') || '';
-                form.querySelector('[name="catatan_internal"]').value = tombol.getAttribute('data-catatan-internal') || '';
+                form.querySelector('[name="nominal"]').value = formatRibuan(tombol.getAttribute(
+                    'data-nominal'));
+                form.querySelector('[name="catatan_publik"]').value = tombol.getAttribute(
+                    'data-catatan-publik') || '';
+                form.querySelector('[name="catatan_internal"]').value = tombol.getAttribute(
+                    'data-catatan-internal') || '';
 
                 if (tipe === 'setoran') {
                     const rt = tombol.getAttribute('data-rt');
@@ -986,14 +1003,18 @@
                 }
 
                 if (tipe === 'donasi') {
-                    form.querySelector('[name="nama_donatur"]').value = tombol.getAttribute('data-nama-donatur') || '';
+                    form.querySelector('[name="nama_donatur"]').value = tombol.getAttribute(
+                        'data-nama-donatur') || '';
                     form.querySelector('[name="tujuan"]').value = tombol.getAttribute('data-tujuan') || '';
-                    form.querySelector('[name="donatur_anonim"]').checked = tombol.getAttribute('data-anonim') === '1';
+                    form.querySelector('[name="donatur_anonim"]').checked = tombol.getAttribute(
+                        'data-anonim') === '1';
                 }
 
                 if (tipe === 'lain') {
-                    form.querySelector('[name="pos_dana_id"]').value = tombol.getAttribute('data-pos') || '';
-                    form.querySelector('[name="kategori_id"]').value = tombol.getAttribute('data-kategori') || '';
+                    form.querySelector('[name="pos_dana_id"]').value = tombol.getAttribute('data-pos') ||
+                    '';
+                    form.querySelector('[name="kategori_id"]').value = tombol.getAttribute(
+                        'data-kategori') || '';
                 }
 
                 if (tipe === 'donasi' || tipe === 'lain') {
