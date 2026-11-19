@@ -62,6 +62,8 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::prefix('pemasukan')->name('pemasukan.')->group(function () {
         Route::get('/statistik', [PemasukanController::class, 'statistik'])->name('statistik');
         Route::get('/data', [PemasukanController::class, 'data'])->name('data');
+        Route::get('/ekspor/excel', [PemasukanController::class, 'eksporExcel'])->name('excel');
+        Route::get('/ekspor/pdf', [PemasukanController::class, 'eksporPdf'])->name('pdf');
         Route::post('/', [PemasukanController::class, 'simpan'])->name('simpan');
         Route::put('/{pemasukan}', [PemasukanController::class, 'ubah'])->name('update');
         Route::delete('/{pemasukan}', [PemasukanController::class, 'hapus'])->name('destroy');
@@ -72,6 +74,8 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::prefix('pengeluaran')->name('pengeluaran.')->group(function () {
         Route::get('/statistik', [PengeluaranController::class, 'statistik'])->name('statistik');
         Route::get('/data', [PengeluaranController::class, 'data'])->name('data');
+        Route::get('/ekspor/excel', [PengeluaranController::class, 'eksporExcel'])->name('excel');
+        Route::get('/ekspor/pdf', [PengeluaranController::class, 'eksporPdf'])->name('pdf');
         Route::post('/', [PengeluaranController::class, 'simpan'])->name('simpan');
         Route::put('/{pengeluaran}', [PengeluaranController::class, 'ubah'])->name('update');
         Route::delete('/{pengeluaran}', [PengeluaranController::class, 'hapus'])->name('destroy');
@@ -79,6 +83,8 @@ Route::middleware(['auth', 'nocache', 'paksa.ganti', 'role:admin,bendahara'])->g
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
 
     Route::get('/transaksi/data', [TransaksiController::class, 'data'])->name('transaksi.data');
+    Route::get('/transaksi/ekspor/excel', [TransaksiController::class, 'eksporExcel'])->name('transaksi.excel');
+    Route::get('/transaksi/ekspor/pdf', [TransaksiController::class, 'eksporPdf'])->name('transaksi.pdf');
     Route::get('/transaksi/{id}/detail', [TransaksiController::class, 'detail'])->name('transaksi.detail');
 
     Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');

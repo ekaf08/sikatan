@@ -357,7 +357,15 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <h2 class="section-title">Daftar pemasukan</h2>
+                <h2 class="section-title mb-0">Daftar pemasukan</h2>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-outline-brand btn-sm" href="{{ route('pemasukan.excel') }}">
+                        <i class="bi bi-file-earmark-excel me-1"></i>Excel (CSV)
+                    </a>
+                    <a class="btn btn-outline-brand btn-sm" href="{{ route('pemasukan.pdf') }}" target="_blank" rel="noopener">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                    </a>
+                </div>
             </div>
 
             <div class="table-responsive">

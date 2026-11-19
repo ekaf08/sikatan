@@ -60,6 +60,14 @@
                         <i class="bi bi-arrow-counterclockwise"></i>
                     </button>
                 </div>
+                <div class="col-12 d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-brand btn-sm" id="btnEksporExcel" type="button">
+                        <i class="bi bi-file-earmark-excel me-1"></i>Ekspor Excel (CSV)
+                    </button>
+                    <button class="btn btn-outline-brand btn-sm" id="btnEksporPdf" type="button">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Ekspor PDF
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -272,6 +280,30 @@
                 });
 
                 tabel.ajax.reload();
+            });
+
+            function paramsEksporTransaksi() {
+                const params = new URLSearchParams();
+                ['jenis', 'pos_dana_id', 'status', 'dari', 'sampai'].forEach(function(key) {
+                    const map = {
+                        jenis: '#filterJenis',
+                        pos_dana_id: '#filterPosDana',
+                        status: '#filterStatus',
+                        dari: '#filterDari',
+                        sampai: '#filterSampai'
+                    };
+                    const val = $(map[key]).val();
+                    if (val) params.set(key, val);
+                });
+                return params.toString();
+            }
+
+            $('#btnEksporExcel').on('click', function() {
+                window.location.href = "{{ route('transaksi.excel') }}" + '?' + paramsEksporTransaksi();
+            });
+
+            $('#btnEksporPdf').on('click', function() {
+                window.open("{{ route('transaksi.pdf') }}" + '?' + paramsEksporTransaksi(), '_blank', 'noopener');
             });
 
             $('#tabelTransaksi').on('click', '.btn-detail-transaksi', function() {

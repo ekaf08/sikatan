@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengeluaranController extends Controller
@@ -223,6 +224,65 @@ class PengeluaranController extends Controller
             'terakhir_kategori' => $data['terakhirKategori'],
             'terakhir_tanggal' => $data['terakhirTanggal'],
         ]);
+    }
+
+    public function eksporExcel(): StreamedResponse
+    {
+        $rows = $this->queryEkspor()->get();
+        $namaBerkas = 'daftar-pengeluaran-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($rows): void {
+            $keluaran = fopen('php://output', 'w');
+            fwrite($keluaran, "\xEF\xBB\xBF");
+            fputcsv($keluaran, ['DAFTAR PENGELUARAN - SISTEM KAMPUNG BABATAN'], ';', '"', '');
+            fputcsv($keluaran, ['Dicetak: '.now()->locale('id')->translatedFormat('d F Y H:i')], ';', '"', '');
+            fputcsv($keluaran, [], ';', '"', '');
+            fputcsv($keluaran, ['No', 'Tanggal', 'Pos Dana', 'Kategori', 'Penerima', 'Acara', 'Keterangan', 'Nominal (Rp)', 'Status'], ';', '"', '');
+            foreach ($rows as $i => $t) {
+                fputcsv($keluaran, [
+                    $i + 1,
+                    $t->tanggal ? $t->tanggal->format('d/m/Y') : '-',
+                    $t->posDana?->nama ?? '-',
+                    $t->kategori?->nama ?? '-',
+                    $t->penerima ?: '-',
+                    $this->acaraTeks($t),
+                    $t->catatan_publik ?: '-',
+                    number_format((float) $t->nominal, 2, ',', '.'),
+                    $t->status === 'batal' ? 'Batal' : 'Aktif',
+                ], ';', '"', '');
+            }
+            fclose($keluaran);
+        }, $namaBerkas, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    public function eksporPdf(): View
+    {
+        return view('pages.pengeluaran-cetak', [
+            'rows' => $this->queryEkspor()->get(),
+            'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),
+        ]);
+    }
+
+    private function queryEkspor()
+    {
+        return Transaksi::query()
+            ->with(['posDana', 'kategori', 'acara', 'anggaranAcara'])
+            ->where('jenis', 'keluar')
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id');
+    }
+
+    private function acaraTeks(Transaksi $transaksi): string
+    {
+        $acara = $transaksi->acara?->nama;
+        $item = $transaksi->anggaranAcara?->uraian;
+        if (! $acara && ! $item) {
+            return '-';
+        }
+        if ($acara && $item) {
+            return $acara.' - '.$item;
+        }
+        return $acara ?? $item;
     }
 
     private function nilaiAudit(Transaksi $transaksi): array

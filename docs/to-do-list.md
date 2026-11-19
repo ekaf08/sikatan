@@ -1,6 +1,6 @@
 ﻿# To-Do List - Sistem Kampung Babatan (evolusi dari SIKATAN)
 
-Terakhir diperbarui: **2026-11-18**
+Terakhir diperbarui: **2026-11-19**
 
 Dokumen kerja terpadu agar pekerjaan dapat dilanjutkan tanpa membaca ulang konteks awal.
 
@@ -8,11 +8,20 @@ Dokumen kerja terpadu agar pekerjaan dapat dilanjutkan tanpa membaca ulang konte
 - [x] **Midtrans donasi publik (implementasi awal + rekap admin + tes otomatis):** mayoritas kode & hardening selesai; **validasi sandbox end-to-end** tertunda (skip sementara, butuh kredensial/URL publik & keputusan bisnis).
 - [x] **Perbaikan halaman publik (fo.home):** filter RW/RT/periode dihapus, data saldo/grafik/pengeluaran terhubung ke DB.
 - [x] **Rebranding & menu dinamis (tahap awal):** rancangan DB, migrasi+model+seeder+service menu, render menu DB di layout publik/admin, rebranding UI utama ke "Sistem Kampung Babatan".
+- [x] **Ekspor admin & perbaikan menu publik:** ekspor Excel(CSV)/PDF untuk daftar transaksi, pemasukan, pengeluaran; header publik diperbaiki ke Iuran Kematian/Donasi.
 - [ ] **Modul kampung lanjutan:** pengumuman, kegiatan/lomba, rebranding aset/APP_NAME penuh, halaman publik terpisah, dsb.
 
 ---
 
 ## Riwayat pekerjaan
+
+### 2026-11-19 - Ekspor admin (Excel/PDF) & perbaikan menu publik
+- [x] **Menu publik diperbaiki:** data `menu` area `publik` masih berisi item lama (Pengeluaran/Pemasukan `#anchor`), sehingga header DB override fallback. Dijalankan `php artisan db:seed --class=MenuSeeder --force` → menu publik menjadi Beranda, `Iuran Kematian` (route `iuran-kematian`), `Donasi` (route `donasi`), Masuk bendahara.
+- [x] **Ekspor daftar transaksi:** `TransaksiController@eksporExcel` (CSV UTF-8 BOM, `;`, pola `LaporanController`) & `@eksporPdf` (view cetak), reuse `terapkanFilter` (jenis/pos/status/tanggal) agar sesuai filter DataTable; route `transaksi.excel/pdf`; tombol ekspor di `pages/transaksi.blade.php` mengirim filter aktif; view `pages/transaksi-cetak.blade.php`.
+- [x] **Ekspor pemasukan:** `PemasukanController@eksporExcel` & `@eksporPdf` (seluruh data `jenis=masuk`, urut sama dengan daftar); route `pemasukan.excel/pdf`; tombol di header `pages/pemasukan.blade.php`; view `pages/pemasukan-cetak.blade.php`.
+- [x] **Ekspor pengeluaran:** `PengeluaranController@eksporExcel` & `@eksporPdf` (seluruh data `jenis=keluar`); route `pengeluaran.excel/pdf`; tombol di header `pages/pengeluaran.blade.php`; view `pages/pengeluaran-cetak.blade.php`.
+- [x] Lint: `php -l` lulus untuk controller & routes yang diubah.
+- [ ] Catatan: format Excel berupa **CSV** (tanpa dependensi baru) seperti laporan; pemasukan/pengeluaran belum punya UI filter sehingga ekspor mencakup seluruh data; ekspor transaksi mengikuti filter form (bukan teks pencarian/sort client DataTables).
 
 ### 2026-11-18 - Rebranding awal, menu dinamis, & beranda publik DB
 - [x] Rancangan database & roadmap: `docs/rancangan-database-sistem-kampung-babatan.md`.

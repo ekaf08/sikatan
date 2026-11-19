@@ -22,19 +22,7 @@ class TransaksiController extends Controller
 
     public function data(Request $request): JsonResponse
     {
-        $query = Transaksi::query()
-            ->withTrashed()
-            ->with([
-                'posDana',
-                'kategori',
-                'rt.rw',
-                'acara',
-                'lampiran' => fn ($lampiran) => $lampiran->withTrashed(),
-            ])
-            ->orderByDesc('tanggal')
-            ->orderByDesc('id');
-
-        $this->terapkanFilter($query, $request);
+        $query = $this->queryTerfilter($request);
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
@@ -109,6 +97,127 @@ class TransaksiController extends Controller
             ->findOrFail($id);
 
         return view('pages.partials.transaksi-detail', compact('transaksi'));
+    }
+
+    public function eksporExcel(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $data = $this->dataEkspor($request);
+        $namaBerkas = 'daftar-transaksi-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($data, $request): void {
+            $keluaran = fopen('php://output', 'w');
+            fwrite($keluaran, "\xEF\xBB\xBF");
+
+            fputcsv($keluaran, ['DAFTAR TRANSAKSI - SISTEM KAMPUNG BABATAN'], ';', '"', '');
+            fputcsv($keluaran, ['Filter: '.$this->ringkasanFilter($request)], ';', '"', '');
+            fputcsv($keluaran, ['Dicetak: '.now()->locale('id')->translatedFormat('d F Y H:i')], ';', '"', '');
+            fputcsv($keluaran, [], ';', '"', '');
+            fputcsv($keluaran, ['No', 'Tanggal', 'Jenis', 'Pos Dana', 'Kategori', 'Keterangan', 'Nominal (Rp)', 'Status'], ';', '"', '');
+
+            foreach ($data as $i => $t) {
+                fputcsv($keluaran, [
+                    $i + 1,
+                    $t->tanggal ? $t->tanggal->format('d/m/Y') : '-',
+                    $t->jenis === 'masuk' ? 'Masuk' : 'Keluar',
+                    $t->posDana?->nama ?? '-',
+                    $t->kategori?->nama ?? '-',
+                    $this->keteranganTeks($t),
+                    number_format((float) $t->nominal, 2, ',', '.'),
+                    $this->statusBatal($t) ? 'Batal' : 'Aktif',
+                ], ';', '"', '');
+            }
+
+            fclose($keluaran);
+        }, $namaBerkas, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    public function eksporPdf(Request $request): View
+    {
+        return view('pages.transaksi-cetak', [
+            'data' => $this->dataEkspor($request),
+            'filterLabel' => $this->ringkasanFilter($request),
+            'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),
+        ]);
+    }
+
+    private function queryTerfilter(Request $request)
+    {
+        $query = Transaksi::query()
+            ->withTrashed()
+            ->with([
+                'posDana',
+                'kategori',
+                'rt.rw',
+                'acara',
+                'lampiran' => fn ($lampiran) => $lampiran->withTrashed(),
+            ])
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id');
+
+        $this->terapkanFilter($query, $request);
+
+        return $query;
+    }
+
+    private function dataEkspor(Request $request)
+    {
+        return $this->queryTerfilter($request)->get();
+    }
+
+    private function ringkasanFilter(Request $request): string
+    {
+        $bagian = [];
+
+        $jenis = $request->input('jenis');
+        if (in_array($jenis, ['masuk', 'keluar'], true)) {
+            $bagian[] = 'Jenis: '.($jenis === 'masuk' ? 'Masuk' : 'Keluar');
+        }
+
+        $posDanaId = $request->input('pos_dana_id');
+        if ($posDanaId && ctype_digit((string) $posDanaId)) {
+            $pos = PosDana::query()->find((int) $posDanaId);
+            if ($pos) {
+                $bagian[] = 'Pos dana: '.$pos->nama;
+            }
+        }
+
+        $status = $request->input('status');
+        if ($status === 'aktif') {
+            $bagian[] = 'Status: Aktif';
+        } elseif ($status === 'batal') {
+            $bagian[] = 'Status: Batal';
+        }
+
+        $dari = $request->input('dari');
+        $sampai = $request->input('sampai');
+        if ($this->tanggalValid($dari) || $this->tanggalValid($sampai)) {
+            $bagian[] = 'Periode: '.($this->tanggalValid($dari) ? $dari : '...').' s.d. '.($this->tanggalValid($sampai) ? $sampai : '...');
+        }
+
+        return $bagian === [] ? 'Semua data' : implode(', ', $bagian);
+    }
+
+    private function keteranganTeks(Transaksi $transaksi): string
+    {
+        $bagian = [];
+
+        if ($transaksi->jenis === 'masuk' && $transaksi->rt) {
+            $bagian[] = 'RT '.$transaksi->rt->nomor.' / '.($transaksi->rt->rw?->nama ?? '-');
+        }
+        if ($transaksi->jenis === 'masuk' && $transaksi->jumlah_kk_bayar) {
+            $bagian[] = $transaksi->jumlah_kk_bayar.' KK';
+        }
+        if ($transaksi->nama_donatur) {
+            $bagian[] = $transaksi->donatur_anonim ? 'Hamba Allah' : $transaksi->nama_donatur;
+        }
+        if ($transaksi->acara) {
+            $bagian[] = $transaksi->acara->nama;
+        }
+        if ($transaksi->catatan_publik) {
+            $bagian[] = Str::limit($transaksi->catatan_publik, 60, '');
+        }
+
+        return $bagian === [] ? '-' : implode(' - ', $bagian);
     }
 
     private function terapkanFilter($query, Request $request): void

@@ -19,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Yajra\DataTables\Facades\DataTables;
 
 class PemasukanController extends Controller
@@ -217,6 +218,72 @@ class PemasukanController extends Controller
             'terakhir_kategori' => $data['terakhirKategori'],
             'terakhir_tanggal' => $data['terakhirTanggal'],
         ]);
+    }
+
+    public function eksporExcel(): StreamedResponse
+    {
+        $rows = $this->queryEkspor()->get();
+        $namaBerkas = 'daftar-pemasukan-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($rows): void {
+            $keluaran = fopen('php://output', 'w');
+            fwrite($keluaran, "\xEF\xBB\xBF");
+            fputcsv($keluaran, ['DAFTAR PEMASUKAN - SISTEM KAMPUNG BABATAN'], ';', '"', '');
+            fputcsv($keluaran, ['Dicetak: '.now()->locale('id')->translatedFormat('d F Y H:i')], ';', '"', '');
+            fputcsv($keluaran, [], ';', '"', '');
+            fputcsv($keluaran, ['No', 'Tanggal', 'Jenis', 'Pos Dana', 'Kategori', 'Rincian', 'Nominal (Rp)', 'Status'], ';', '"', '');
+            foreach ($rows as $i => $t) {
+                fputcsv($keluaran, [
+                    $i + 1,
+                    $t->tanggal ? $t->tanggal->format('d/m/Y') : '-',
+                    self::LABEL_TIPE[$this->tipeTransaksi($t)],
+                    $t->posDana?->nama ?? '-',
+                    $t->kategori?->nama ?? '-',
+                    $this->rincianTeks($t),
+                    number_format((float) $t->nominal, 2, ',', '.'),
+                    $t->status === 'batal' ? 'Batal' : 'Aktif',
+                ], ';', '"', '');
+            }
+            fclose($keluaran);
+        }, $namaBerkas, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    public function eksporPdf(): View
+    {
+        return view('pages.pemasukan-cetak', [
+            'rows' => $this->queryEkspor()->get(),
+            'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),
+        ]);
+    }
+
+    private function queryEkspor()
+    {
+        return Transaksi::query()
+            ->with(['posDana', 'kategori', 'rt.rw'])
+            ->where('jenis', 'masuk')
+            ->orderByDesc('tanggal')
+            ->orderByDesc('id');
+    }
+
+    private function rincianTeks(Transaksi $transaksi): string
+    {
+        $bagian = [];
+        if ($transaksi->rt) {
+            $bagian[] = 'RT '.$transaksi->rt->nomor.' / '.($transaksi->rt->rw?->nama ?? '-');
+        }
+        if ($transaksi->jumlah_kk_bayar) {
+            $bagian[] = $transaksi->jumlah_kk_bayar.' KK';
+        }
+        if ($transaksi->nama_donatur) {
+            $bagian[] = $transaksi->donatur_anonim ? 'Hamba Allah' : $transaksi->nama_donatur;
+        }
+        if ($transaksi->tujuan) {
+            $bagian[] = $transaksi->tujuan;
+        }
+        if ($bagian === [] && $transaksi->catatan_publik) {
+            $bagian[] = Str::limit($transaksi->catatan_publik, 45, '');
+        }
+        return $bagian === [] ? '-' : implode(' - ', $bagian);
     }
 
     private function nilaiAudit(Transaksi $transaksi): array
