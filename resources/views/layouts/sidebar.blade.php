@@ -1,4 +1,4 @@
-﻿@php
+@php
     $pengguna = auth()->user();
     $inisial = strtoupper(mb_substr($pengguna->name ?? 'P', 0, 1));
     $menuLayanan = app(\App\Services\MenuLayanan::class);
