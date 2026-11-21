@@ -9,7 +9,9 @@ use App\Models\Pengaturan;
 use App\Models\PosDana;
 use App\Models\Transaksi;
 use App\Services\SaldoDana;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -151,15 +153,15 @@ class LaporanController extends Controller
         ]);
     }
 
-    public function eksporPdf(Request $request): View
+    public function eksporPdf(Request $request): Response
     {
         $filter = $this->filter($request);
 
-        return view('pages.cetak.laporan-cetak', [
+        return Pdf::loadView('pages.cetak.laporan-pdf', [
             'data' => $this->laporan($filter),
             'isi' => $filter['isi'],
             'pengaturan' => $this->pengaturan(),
-        ]);
+        ])->setPaper('a4', 'portrait')->stream('laporan.pdf');
     }
 
     private function laporan(array $filter): array
