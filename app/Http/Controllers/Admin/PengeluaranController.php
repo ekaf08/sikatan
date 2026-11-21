@@ -80,7 +80,7 @@ class PengeluaranController extends Controller
 
                 $lampiran = $transaksi->lampiran->map(fn (Lampiran $item): array => [
                     'id' => $item->id,
-                    'url' => asset('storage/'.$item->lokasi_berkas),
+                    'url' => FotoPreview::url($item->lokasi_berkas),
                     'nama' => basename($item->lokasi_berkas),
                 ])->values();
 

@@ -57,17 +57,18 @@
         <div class="card-body">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <h2 class="section-title mb-0">Daftar pengeluaran</h2>
-                {{-- <div class="d-flex flex-wrap gap-2">
-                    <a class="btn btn-outline-brand btn-sm" href="{{ route('pengeluaran.excel') }}">
+                <div class="d-flex flex-wrap gap-2">
+                    {{-- <a class="btn btn-outline-brand btn-sm" href="{{ route('pengeluaran.excel') }}">
                         <i class="bi bi-file-earmark-excel me-1"></i>Excel (CSV)
                     </a>
-                    <a class="btn btn-outline-brand btn-sm" href="{{ route('pengeluaran.pdf') }}" target="_blank" rel="noopener">
+                    <a class="btn btn-outline-brand btn-sm" href="{{ route('pengeluaran.pdf') }}" target="_blank"
+                        rel="noopener">
                         <i class="bi bi-file-earmark-pdf me-1"></i>PDF
-                    </a>
+                    </a> --}}
                     <button class="btn btn-brand" type="button" id="btnTambahKeluar">
                         <i class="bi bi-plus-lg"></i>Tambah pengeluaran
                     </button>
-                </div> --}}
+                </div>
             </div>
 
             <div class="table-responsive">

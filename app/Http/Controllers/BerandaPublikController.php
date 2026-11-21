@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PosDana;
 use App\Models\Transaksi;
 use App\Services\SaldoDana;
+use App\Support\FotoPreview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -114,7 +115,7 @@ class BerandaPublikController extends Controller
 
         return $t->lampiran
             ->filter(fn ($l) => (bool) $l->tampil_publik)
-            ->map(fn ($l) => asset('storage/'.$l->lokasi_berkas))
+            ->map(fn ($l) => FotoPreview::url($l->lokasi_berkas))
             ->values()
             ->all();
     }

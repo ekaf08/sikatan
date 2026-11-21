@@ -60,7 +60,7 @@
     $detail[] = ['label' => 'Terakhir diperbarui', 'nilai' => $transaksi->updated_at?->copy()->locale('id')->translatedFormat('d M Y H.i') ?? '-'];
 
     $fotoLampiran = $transaksi->lampiran->map(fn ($item): array => [
-        'url' => asset('storage/'.$item->lokasi_berkas),
+        'url' => \App\Support\FotoPreview::url($item->lokasi_berkas),
         'nama' => basename($item->lokasi_berkas),
     ])->values()->all();
 

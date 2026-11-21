@@ -7,6 +7,13 @@ use Illuminate\Support\Collection;
 
 class FotoPreview
 {
+    public static function url(string $lokasiBerkas): string
+    {
+        $basis = rtrim(request()->getBaseUrl(), '/');
+
+        return $basis.'/storage/'.ltrim($lokasiBerkas, '/');
+    }
+
     public static function render(Collection $lampiran, int $limit = 3): string
     {
         if ($lampiran->isEmpty()) {
@@ -14,7 +21,7 @@ class FotoPreview
         }
 
         $daftar = $lampiran->map(fn (Lampiran $item): array => [
-            'url' => asset('storage/'.$item->lokasi_berkas),
+            'url' => self::url($item->lokasi_berkas),
             'nama' => basename($item->lokasi_berkas),
         ])->values();
 
