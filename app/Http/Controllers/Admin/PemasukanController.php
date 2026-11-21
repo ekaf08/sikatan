@@ -11,6 +11,7 @@ use App\Models\Rt;
 use App\Models\Transaksi;
 use App\Services\KompresiGambar;
 use App\Services\PencatatAudit;
+use App\Support\FotoPreview;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -459,24 +460,7 @@ class PemasukanController extends Controller
 
     private function lampiranHtml(Transaksi $transaksi): string
     {
-        if ($transaksi->lampiran->isEmpty()) {
-            return '<span class="hint">&mdash;</span>';
-        }
-
-        $html = '<div class="d-flex flex-wrap gap-1">';
-
-        foreach ($transaksi->lampiran->take(3) as $item) {
-            $url = e(asset('storage/'.$item->lokasi_berkas));
-            $html .= '<a href="'.$url.'" target="_blank" rel="noopener">'
-                .'<img src="'.$url.'" alt="lampiran" style="width:38px;height:38px;object-fit:cover;border-radius:.35rem;border:1px solid rgba(0,0,0,.15)">'
-                .'</a>';
-        }
-
-        if ($transaksi->lampiran->count() > 3) {
-            $html .= '<span class="badge-soft badge-neutral">+'.($transaksi->lampiran->count() - 3).'</span>';
-        }
-
-        return $html.'</div>';
+        return FotoPreview::render($transaksi->lampiran);
     }
 
     private function statistikData(): array

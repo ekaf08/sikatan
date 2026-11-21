@@ -11,6 +11,7 @@ use App\Models\PosDana;
 use App\Models\Transaksi;
 use App\Services\KompresiGambar;
 use App\Services\PencatatAudit;
+use App\Support\FotoPreview;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -69,22 +70,7 @@ class PengeluaranController extends Controller
                 return $acara ?? $item;
             })
             ->addColumn('nominal_format', fn (Transaksi $transaksi): string => number_format((float) $transaksi->nominal, 0, ',', '.'))
-            ->addColumn('foto', function (Transaksi $transaksi): string {
-                if ($transaksi->lampiran->isEmpty()) {
-                    return '';
-                }
-
-                $html = '<div class="d-flex flex-wrap gap-1">';
-
-                foreach ($transaksi->lampiran as $item) {
-                    $url = e(asset('storage/'.$item->lokasi_berkas));
-                    $html .= '<a href="'.$url.'" target="_blank" rel="noopener">'
-                        .'<img src="'.$url.'" alt="nota" style="width:38px;height:38px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
-                        .'</a>';
-                }
-
-                return $html.'</div>';
-            })
+            ->addColumn('foto', fn (Transaksi $transaksi): string => FotoPreview::render($transaksi->lampiran))
             ->addColumn('status_label', fn (Transaksi $transaksi): string => $transaksi->status === 'batal' ? 'Batal' : 'Aktif')
             ->addColumn('aksi', function (Transaksi $transaksi): string {
                 $catatanPublik = e($transaksi->catatan_publik ?? '');

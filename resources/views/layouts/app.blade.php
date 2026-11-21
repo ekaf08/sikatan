@@ -33,6 +33,7 @@
                 @yield('content')
             </main>
         </div>
+        @include('pages.partials.modal-foto-preview')
         @include('layouts.script')
         @stack('scripts')
     </body>

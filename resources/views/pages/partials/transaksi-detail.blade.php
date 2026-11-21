@@ -58,6 +58,17 @@
     }
 
     $detail[] = ['label' => 'Terakhir diperbarui', 'nilai' => $transaksi->updated_at?->copy()->locale('id')->translatedFormat('d M Y H.i') ?? '-'];
+
+    $fotoLampiran = $transaksi->lampiran->map(fn ($item): array => [
+        'url' => asset('storage/'.$item->lokasi_berkas),
+        'nama' => basename($item->lokasi_berkas),
+    ])->values()->all();
+
+    $fotoLampiranJson = json_encode($fotoLampiran, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+    if ($fotoLampiranJson === false) {
+        $fotoLampiranJson = '[]';
+    }
 @endphp
 
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 pb-3 mb-3 border-bottom">
@@ -127,12 +138,14 @@
     <p class="hint mb-0">Tidak ada foto atau lampiran pada transaksi ini.</p>
 @else
     <div class="d-flex flex-wrap gap-2">
-        @foreach ($transaksi->lampiran as $lampiran)
-            <a href="{{ asset('storage/'.$lampiran->lokasi_berkas) }}" target="_blank" rel="noopener"
-                title="Buka lampiran">
-                <img src="{{ asset('storage/'.$lampiran->lokasi_berkas) }}" alt="Lampiran transaksi"
+        @foreach ($fotoLampiran as $indeks => $foto)
+            <button class="foto-preview-trigger p-0 border-0 bg-transparent" type="button"
+                data-foto-preview data-bs-toggle="modal" data-bs-target="#modalFotoPreview"
+                data-foto-daftar="{{ $fotoLampiranJson }}" data-foto-indeks="{{ $indeks }}"
+                data-foto-nama="{{ $foto['nama'] }}" title="Lihat foto">
+                <img src="{{ $foto['url'] }}" alt="Lampiran transaksi" loading="lazy"
                     style="width: 96px; height: 96px; object-fit: cover; border-radius: .5rem; border: 1px solid rgba(0,0,0,.15);">
-            </a>
+            </button>
         @endforeach
     </div>
 @endif

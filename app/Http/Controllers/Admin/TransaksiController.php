@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PosDana;
 use App\Models\Transaksi;
+use App\Support\FotoPreview;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -272,24 +273,7 @@ class TransaksiController extends Controller
 
     private function fotoHtml(Transaksi $transaksi): string
     {
-        if ($transaksi->lampiran->isEmpty()) {
-            return '<span class="hint">&mdash;</span>';
-        }
-
-        $html = '<div class="d-flex flex-wrap gap-1">';
-
-        foreach ($transaksi->lampiran->take(3) as $lampiran) {
-            $url = e(asset('storage/'.$lampiran->lokasi_berkas));
-            $html .= '<a href="'.$url.'" target="_blank" rel="noopener">'
-                .'<img src="'.$url.'" alt="Foto transaksi" style="width:40px;height:40px;object-fit:cover;border-radius:.375rem;border:1px solid rgba(0,0,0,.15)">'
-                .'</a>';
-        }
-
-        if ($transaksi->lampiran->count() > 3) {
-            $html .= '<span class="badge-soft badge-neutral">+'.($transaksi->lampiran->count() - 3).'</span>';
-        }
-
-        return $html.'</div>';
+        return FotoPreview::render($transaksi->lampiran);
     }
 
     private function statusBatal(Transaksi $transaksi): bool
