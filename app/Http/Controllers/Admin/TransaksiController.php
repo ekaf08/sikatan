@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PosDana;
 use App\Models\Transaksi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
@@ -131,13 +133,13 @@ class TransaksiController extends Controller
         }, $namaBerkas, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    public function eksporPdf(Request $request): View
+    public function eksporPdf(Request $request): Response
     {
-        return view('pages.cetak.transaksi-cetak', [
+        return Pdf::loadView('pages.cetak.transaksi-pdf', [
             'data' => $this->dataEkspor($request),
             'filterLabel' => $this->ringkasanFilter($request),
             'dicetakPada' => now()->locale('id')->translatedFormat('d F Y H:i'),
-        ]);
+        ])->setPaper('a4', 'landscape')->stream('transaksi.pdf');
     }
 
     private function queryTerfilter(Request $request)
